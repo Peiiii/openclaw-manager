@@ -12,6 +12,7 @@
 - CLI 安装支持 Job 日志输出
 - 网关启动 / 通道探测切换为 Job 执行
 - 前端 CLI/网关/探测步骤展示终端日志
+- SSE 通用接口：`/api/jobs/*` + `/api/jobs/:id/stream`
 
 ## 验证方式
 
@@ -22,6 +23,7 @@
   - 启动 API（禁用鉴权）
   - `POST /api/jobs/quickstart` 创建 Job
   - `GET /api/jobs/:id/stream` 收到 `done`/`error` 事件
+  - UI 侧 CLI/网关/探测日志可见
 
 ## 发布/部署
 
