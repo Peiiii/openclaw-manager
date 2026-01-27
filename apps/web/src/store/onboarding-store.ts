@@ -22,6 +22,8 @@ export type ProcessEntry = {
   lastLines: string[];
 };
 
+type JobStatus = "idle" | "running" | "success" | "failed";
+
 export type StatusResponse = {
   ok: boolean;
   now: string;
@@ -67,6 +69,10 @@ type OnboardingState = {
   processes: ProcessEntry[];
   loading: boolean;
   error: string | null;
+  cliJobId: string | null;
+  cliJobStatus: JobStatus;
+  cliLogs: string[];
+  cliJobError: string | null;
   authHeader: string | null;
   authRequired: boolean;
   authConfigured: boolean;
@@ -90,6 +96,7 @@ type OnboardingState = {
     gatewayReady?: boolean;
     probeOk?: boolean;
   }>;
+  startCliInstallJob: () => Promise<{ ok: boolean; error?: string }>;
 };
 
 const DEFAULT_API_BASE =
@@ -108,6 +115,10 @@ export const useOnboardingStore = create<OnboardingState>()(
       processes: [],
       loading: false,
       error: null,
+      cliJobId: null,
+      cliJobStatus: "idle",
+      cliLogs: [],
+      cliJobError: null,
       authHeader: null,
       authRequired: false,
       authConfigured: false,
@@ -224,6 +235,48 @@ export const useOnboardingStore = create<OnboardingState>()(
           return { ok: false, error: err instanceof Error ? err.message : String(err) };
         }
       },
+      startCliInstallJob: async () => {
+        const { apiBase, authHeader } = get();
+        set({ cliJobStatus: "running", cliLogs: [], cliJobError: null, cliJobId: null });
+        try {
+          const res = await fetch(`${apiBase}/api/jobs/cli-install`, {
+            method: "POST",
+            headers: { "content-type": "application/json", ...authHeaders(authHeader) },
+            body: JSON.stringify({})
+          });
+          if (!res.ok) throw new Error(`Job create failed: ${res.status}`);
+          const data = (await res.json()) as { ok: boolean; jobId?: string; error?: string };
+          if (!data.ok || !data.jobId) {
+            throw new Error(data.error ?? "Job create failed");
+          }
+          set({ cliJobId: data.jobId });
+          await streamJobEvents(`${apiBase}/api/jobs/${data.jobId}/stream`, authHeader, (event) => {
+            if (event.type === "log") {
+              set((state) => ({
+                cliLogs: [...state.cliLogs, event.message].slice(-200)
+              }));
+            } else if (event.type === "status") {
+              if (event.status === "success") {
+                set({ cliJobStatus: "success" });
+              } else if (event.status === "failed") {
+                set({ cliJobStatus: "failed" });
+              } else {
+                set({ cliJobStatus: "running" });
+              }
+            } else if (event.type === "done") {
+              set({ cliJobStatus: "success" });
+            } else if (event.type === "error") {
+              set({ cliJobStatus: "failed", cliJobError: event.error });
+            }
+          });
+          await get().refresh();
+          return { ok: true };
+        } catch (err) {
+          const message = err instanceof Error ? err.message : String(err);
+          set({ cliJobStatus: "failed", cliJobError: message });
+          return { ok: false, error: message };
+        }
+      },
       setDiscordToken: async (token) => {
         const { apiBase, authHeader } = get();
         try {
@@ -317,4 +370,77 @@ function buildBasicAuth(username: string, password: string) {
   const raw = `${username}:${password}`;
   const encoded = btoa(raw);
   return `Basic ${encoded}`;
+}
+
+type StreamEvent =
+  | { type: "log"; message: string }
+  | { type: "status"; status: string }
+  | { type: "done"; result?: unknown }
+  | { type: "error"; error: string };
+
+async function streamJobEvents(
+  url: string,
+  authHeader: string | null,
+  onEvent: (event: StreamEvent) => void
+) {
+  const res = await fetch(url, { headers: authHeaders(authHeader) });
+  if (!res.ok) {
+    throw new Error(`Stream failed: ${res.status}`);
+  }
+  if (!res.body) {
+    throw new Error("Stream unavailable");
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    let index = buffer.indexOf("\n\n");
+    while (index >= 0) {
+      const chunk = buffer.slice(0, index);
+      buffer = buffer.slice(index + 2);
+      const parsed = parseSseChunk(chunk);
+      if (parsed) onEvent(parsed);
+      index = buffer.indexOf("\n\n");
+    }
+  }
+}
+
+function parseSseChunk(chunk: string): StreamEvent | null {
+  const lines = chunk.split(/\r?\n/);
+  let event = "message";
+  let data = "";
+  for (const line of lines) {
+    if (line.startsWith(":")) continue;
+    if (line.startsWith("event:")) {
+      event = line.slice(6).trim();
+      continue;
+    }
+    if (line.startsWith("data:")) {
+      data += line.slice(5).trim();
+    }
+  }
+  if (!data) return null;
+  try {
+    const parsed = JSON.parse(data) as Record<string, unknown>;
+    if (event === "log") {
+      return { type: "log", message: String(parsed.message ?? "") };
+    }
+    if (event === "status") {
+      return { type: "status", status: String(parsed.status ?? "") };
+    }
+    if (event === "done") {
+      return { type: "done", result: parsed.result };
+    }
+    if (event === "error") {
+      return { type: "error", error: String(parsed.error ?? "error") };
+    }
+  } catch {
+    return null;
+  }
+  return null;
 }

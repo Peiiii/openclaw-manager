@@ -21,7 +21,7 @@ export default function App() {
     refresh,
     checkAuth,
     login,
-    installCli,
+    startCliInstallJob,
     setDiscordToken,
     approveDiscordPairing,
     quickstart
@@ -51,6 +51,9 @@ export default function App() {
   const authRequired = useOnboardingStore((state) => state.authRequired);
   const authConfigured = useOnboardingStore((state) => state.authConfigured);
   const authHeader = useOnboardingStore((state) => state.authHeader);
+  const cliLogs = useOnboardingStore((state) => state.cliLogs);
+  const cliJobStatus = useOnboardingStore((state) => state.cliJobStatus);
+  const cliJobError = useOnboardingStore((state) => state.cliJobError);
 
   // Polling
   useEffect(() => {
@@ -121,15 +124,17 @@ export default function App() {
 
   const handleCliInstall = useCallback(async () => {
     setIsProcessing(true);
-    setCliMessage("正在安装 CLI...");
-    const result = await installCli();
-    if (result.ok) {
-      setCliMessage(result.alreadyInstalled ? "CLI 已就绪。" : "安装完成，正在刷新状态...");
-    } else {
+    setCliMessage("正在启动安装任务...");
+    const result = await startCliInstallJob();
+    if (!result.ok) {
       setCliMessage(`安装失败: ${result.error}`);
+    } else if (cliJobError) {
+      setCliMessage(`安装失败: ${cliJobError}`);
+    } else {
+      setCliMessage("安装完成，正在刷新状态...");
     }
     setIsProcessing(false);
-  }, [installCli]);
+  }, [startCliInstallJob, cliJobError]);
 
   const handleTokenSubmit = useCallback(async () => {
     if (!tokenInput.trim()) return;
@@ -265,6 +270,8 @@ export default function App() {
                 isChecking={cliChecking}
                 isProcessing={isProcessing}
                 message={cliMessage}
+                logs={cliLogs}
+                jobStatus={cliJobStatus}
                 onInstall={handleCliInstall}
               />
             )}

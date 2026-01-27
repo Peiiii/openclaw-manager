@@ -25,6 +25,74 @@ export function findOnPath(binary: string): string | null {
   return null;
 }
 
+type StreamCommandOptions = {
+  cwd: string;
+  env: NodeJS.ProcessEnv;
+  timeoutMs: number;
+  onLog: (line: string) => void;
+};
+
+export function runCommandWithLogs(
+  cmd: string,
+  args: string[],
+  options: StreamCommandOptions
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const child = spawn(cmd, args, {
+      cwd: options.cwd,
+      stdio: ["ignore", "pipe", "pipe"],
+      env: options.env
+    });
+
+    let stdoutBuffer = "";
+    let stderrBuffer = "";
+
+    const flushLines = (buffer: string, prefix?: string) => {
+      const lines = buffer.split(/\r?\n/);
+      const rest = lines.pop() ?? "";
+      for (const line of lines) {
+        const trimmed = line.trimEnd();
+        if (trimmed) {
+          options.onLog(prefix ? `${prefix}${trimmed}` : trimmed);
+        }
+      }
+      return rest;
+    };
+
+    const timer = setTimeout(() => {
+      child.kill("SIGTERM");
+      reject(new Error("timeout"));
+    }, options.timeoutMs);
+
+    child.stdout?.on("data", (chunk) => {
+      stdoutBuffer += chunk.toString();
+      stdoutBuffer = flushLines(stdoutBuffer);
+    });
+
+    child.stderr?.on("data", (chunk) => {
+      stderrBuffer += chunk.toString();
+      stderrBuffer = flushLines(stderrBuffer, "stderr: ");
+    });
+
+    child.on("error", (err) => {
+      clearTimeout(timer);
+      reject(err);
+    });
+
+    child.on("close", (code) => {
+      clearTimeout(timer);
+      if (stdoutBuffer.trim()) {
+        options.onLog(stdoutBuffer.trimEnd());
+      }
+      if (stderrBuffer.trim()) {
+        options.onLog(`stderr: ${stderrBuffer.trimEnd()}`);
+      }
+      if (code === 0) resolve();
+      else reject(new Error(`exit ${code ?? "unknown"}`));
+    });
+  });
+}
+
 function runCommand(
   cmd: string,
   args: string[],

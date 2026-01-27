@@ -92,6 +92,8 @@ interface CliStepProps {
     isChecking: boolean;
     isProcessing: boolean;
     message: string | null;
+    logs: string[];
+    jobStatus: string;
     onInstall: () => void;
 }
 
@@ -101,6 +103,8 @@ export function CliStep({
     isChecking,
     isProcessing,
     message,
+    logs,
+    jobStatus,
     onInstall
 }: CliStepProps) {
     const statusText = installed
@@ -144,6 +148,14 @@ export function CliStep({
                 <code className="break-words">npm i -g clawdbot@latest</code>
                 <div className="mt-2 text-[11px]">如提示权限不足，可改用 sudo 执行。</div>
             </div>
+            {logs.length > 0 ? (
+                <div className="rounded-2xl bg-black/80 p-4 text-left text-xs text-emerald-200">
+                    <div className="mb-2 text-[11px] uppercase tracking-widest text-emerald-300">
+                        {jobStatus === "running" ? "安装日志" : "安装日志（已完成）"}
+                    </div>
+                    <pre className="max-h-48 overflow-auto whitespace-pre-wrap">{logs.join("\n")}</pre>
+                </div>
+            ) : null}
             {message && (
                 <div className="rounded-2xl bg-line/30 px-4 py-2 text-xs text-muted text-center">
                     {message}

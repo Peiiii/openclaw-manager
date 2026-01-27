@@ -18,7 +18,8 @@ type QuickstartResult =
 
 export async function runQuickstart(
   deps: ApiDeps,
-  body: QuickstartRequest
+  body: QuickstartRequest,
+  log?: (line: string) => void
 ): Promise<QuickstartResult> {
   const runProbe = Boolean(body?.runProbe);
   const startGateway = body?.startGateway !== false;
@@ -32,28 +33,39 @@ export async function runQuickstart(
   let gatewayReady = false;
   let probeOk: boolean | undefined;
 
+  log?.("检查 CLI 环境...");
   const cli = await getCliStatus(deps.runCommand);
   if (!cli.installed) {
+    log?.("未检测到 CLI。");
     return { ok: false, error: "clawdbot CLI not installed", status: 400 };
+  }
+  if (cli.version) {
+    log?.(`CLI 版本: ${cli.version}`);
   }
 
   if (startGateway) {
+    log?.("启动网关中...");
     const started = deps.processManager.startProcess("gateway-run");
     if (!started.ok) {
       return { ok: false, error: started.error ?? "unknown", status: 500 };
     }
     gatewayReady = await waitForGateway(gatewayHost, gatewayPort, 12_000);
+    log?.(gatewayReady ? "网关已就绪。" : "网关启动超时。");
   } else {
+    log?.("检查网关状态...");
     const snapshot = await checkGateway(gatewayHost, gatewayPort);
     gatewayReady = snapshot.ok;
+    log?.(gatewayReady ? "网关已就绪。" : "网关未就绪。");
   }
 
   if (runProbe) {
+    log?.("执行通道探测...");
     probeOk = await deps
       .runCommand("clawdbot", ["channels", "status", "--probe"], 12_000)
       .then(() => true)
       .catch(() => false);
     setLastProbe(Boolean(probeOk));
+    log?.(probeOk ? "通道探测通过。" : "通道探测未通过。");
   }
 
   return { ok: true, gatewayReady, probeOk };

@@ -4,6 +4,7 @@ import { createApp } from "./app.js";
 import { DEFAULT_API_HOST, DEFAULT_API_PORT } from "./lib/constants.js";
 import { resolveRepoRoot, resolveWebDist } from "./lib/config.js";
 import { buildCommandRegistry, createProcessManager } from "./lib/commands.js";
+import { createJobStore } from "./lib/jobs.js";
 import { createCommandRunner } from "./lib/runner.js";
 import { parseOrigins, parsePort } from "./lib/utils.js";
 import type { ApiDeps } from "./deps.js";
@@ -13,12 +14,14 @@ const webDist = resolveWebDist(repoRoot);
 const commandRegistry = buildCommandRegistry(repoRoot);
 const processManager = createProcessManager(commandRegistry);
 const runCommand = createCommandRunner(repoRoot);
+const jobStore = createJobStore();
 
 const deps: ApiDeps = {
   repoRoot,
   runCommand,
   commandRegistry,
   processManager,
+  jobStore,
   auth: {
     disabled: process.env.MANAGER_AUTH_DISABLED === "1",
     allowUnconfigured: process.env.MANAGER_AUTH_ALLOW_UNCONFIGURED === "1"

@@ -5,6 +5,7 @@ import { registerAuthRoutes } from "./auth.js";
 import { registerCliRoutes } from "./cli.js";
 import { registerDiscordRoutes } from "./discord.js";
 import { registerHealthRoutes } from "./health.js";
+import { registerJobRoutes } from "./jobs.js";
 import { registerProcessRoutes } from "./processes.js";
 import { registerQuickstartRoutes } from "./quickstart.js";
 import { registerStatusRoutes } from "./status.js";
@@ -17,4 +18,5 @@ export function registerRoutes(app: Hono, deps: ApiDeps) {
   registerCliRoutes(app, deps);
   registerDiscordRoutes(app, deps);
   registerQuickstartRoutes(app, deps);
+  registerJobRoutes(app, deps);
 }
