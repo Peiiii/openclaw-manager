@@ -88,8 +88,10 @@ port = 18789
 
 ### 2) 启动 API
 
+如果启用了鉴权，请确保 API 启动时使用与 `manager.toml` 一致的管理员账号：
+
 ```bash
-pnpm dev:api
+MANAGER_AUTH_USERNAME=admin MANAGER_AUTH_PASSWORD=pass pnpm dev:api
 ```
 
 ### 3) 检查服务状态
