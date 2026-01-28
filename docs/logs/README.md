@@ -10,6 +10,7 @@
 - `docs/logs/v0.0.8-docker-deploy/README.md`
 - `docs/logs/v0.0.9-docker-script/README.md`
 - `docs/logs/v0.0.10-local-docker-script/README.md`
+- `docs/logs/v0.0.11-docker-script-fix/README.md`
 
 ## 写日志的标准
 

@@ -27,8 +27,8 @@ docker run -d --name "$NAME" -p "${PORT}:${PORT}" \
   git clone \"$REPO_URL\" /opt/moltbot-manager; \
   cd /opt/moltbot-manager; \
   CI=true pnpm install >/dev/null; pnpm build >/dev/null; \
-  node apps/api/scripts/create-admin.mjs --username \"$MANAGER_ADMIN_USER\" --password \"$MANAGER_ADMIN_PASS\" --config /etc/clawdbot-manager/config.json; \
+  node apps/api/scripts/create-admin.mjs --username \"\$MANAGER_ADMIN_USER\" --password \"\$MANAGER_ADMIN_PASS\" --config /etc/clawdbot-manager/config.json; \
   exec node /opt/moltbot-manager/apps/api/dist/index.js"
 
 echo "[manager] Open: http://127.0.0.1:${PORT}"
-echo "[manager] Login: ${ADMIN_USER} / (MANAGER_ADMIN_PASS)"
+echo "[manager] Login: ${ADMIN_USER} / ${ADMIN_PASS}"
