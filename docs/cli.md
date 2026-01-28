@@ -58,6 +58,74 @@ pnpm manager:apply -- --config ./manager.toml
 pnpm manager:pairing-approve -- --code "ABCDE123" --continue
 ```
 
+## 完整示例流程
+
+下面是一个从零到验证完成的完整顺序示例（包含配对步骤）。将示例中的占位值替换为你的真实配置，并保存为 `manager.toml`。
+
+### 1) 准备配置文件
+
+```toml
+[api]
+base = "http://127.0.0.1:17321"
+
+[admin]
+user = "admin"
+pass = "pass"
+
+[discord]
+token = "YOUR_DISCORD_BOT_TOKEN"
+
+[ai]
+provider = "minimax-cn"
+key = "YOUR_API_KEY"
+
+[gateway]
+start = true
+probe = false
+host = "127.0.0.1"
+port = 18789
+```
+
+### 2) 启动 API
+
+```bash
+pnpm dev:api
+```
+
+### 3) 检查服务状态
+
+```bash
+pnpm manager:status
+```
+
+### 4) 保存 Discord Token
+
+```bash
+pnpm manager:discord-token -- --config ./manager.toml
+```
+
+### 5) 配置 AI Provider
+
+```bash
+pnpm manager:ai-auth -- --config ./manager.toml
+```
+
+### 6) 快速启动网关（不探测）
+
+```bash
+pnpm manager:quickstart -- --config ./manager.toml
+```
+
+### 7) 配对（拿到配对码后执行）
+
+```bash
+pnpm manager:pairing-approve -- --code "ABCDE123" --continue
+```
+
+验收点：
+- `pairing-approve` 输出完成提示
+- `--continue` 会执行探测，看到探测成功日志
+
 ## 常用命令
 
 查看状态：
