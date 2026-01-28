@@ -16,6 +16,11 @@
 非交互模式：
 - `MANAGER_NON_INTERACTIVE=1`
 
+默认配置文件（所有命令都会读取）：
+- `manager.toml`（可用 `--config` 或 `MANAGER_CONFIG` 指定）
+- 建议将该文件加入 `.gitignore`
+命令在配置缺失时会提示输入（`MANAGER_NON_INTERACTIVE=1` 则直接报错）。
+
 ## 步骤命令
 
 查看状态：
@@ -58,6 +63,16 @@ pnpm manager:pairing-approve -- --code "ABCDE123"
 pnpm manager:pairing-prompt
 ```
 
+交互式输入并完成探测：
+```bash
+pnpm manager:pairing-prompt -- --continue
+```
+
+拿到配对码后继续完成探测：
+```bash
+pnpm manager:pairing-approve -- --code "ABCDE123" --continue
+```
+
 非交互模式（不弹出输入）：
 ```bash
 pnpm manager:apply -- --config ./manager.toml --non-interactive
@@ -68,6 +83,7 @@ pnpm manager:apply -- --config ./manager.toml --non-interactive
 pnpm manager:pairing-wait -- --timeout 180000 --poll 3000 --notify
 ```
 提示：配对请求需要由用户向机器人发送一条 DM 触发，命令会自动等待并批准。
+提示：所有命令都支持 `--config /path/to/manager.toml` 指定配置。
 
 ## 常见问题
 
@@ -98,6 +114,8 @@ key = "YOUR_API_KEY"
 [gateway]
 start = true
 probe = true
+host = "127.0.0.1"
+port = 18789
 
 [pairing]
 # 三选一：prompt/wait/codes（优先级：prompt > wait > codes）

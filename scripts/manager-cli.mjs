@@ -4,21 +4,24 @@ import process from "node:process";
 const args = process.argv.slice(2);
 const cmd = args[0];
 const { flags } = parseArgs(args.slice(1));
+const configPath = resolveConfigPath(flags);
+const config = await loadTomlConfigOptional(configPath);
 
 if (!cmd || cmd === "help" || flags.help) {
   printHelp();
   process.exit(0);
 }
 
-const apiBase = resolveApiBase(flags);
-const auth = resolveAuth(flags);
 const nonInteractive = isNonInteractive(flags);
+const apiBase = resolveApiBase(flags, config);
 
 try {
   if (cmd === "status") {
+    const auth = await resolveAuthHeader({ flags, config, nonInteractive });
+    const gateway = resolveGatewayOverrides(flags, config);
     const query = buildQuery({
-      gatewayHost: flags["gateway-host"],
-      gatewayPort: flags["gateway-port"]
+      gatewayHost: gateway.host,
+      gatewayPort: gateway.port
     });
     const data = await requestJson("GET", `${apiBase}/api/status${query}`, null, auth);
     console.log(JSON.stringify(data, null, 2));
@@ -26,22 +29,21 @@ try {
   }
 
   if (cmd === "apply") {
-    const configPath = flags.config ?? flags.c ?? "manager.toml";
-    const config = await loadTomlConfig(configPath);
-    const apiFromConfig = resolveApiBaseFromConfig(config);
-    const authFromConfig = resolveAuthFromConfig(config);
-    const targetApi = apiFromConfig ?? apiBase;
-    const targetAuth = authFromConfig ?? auth;
-    await applyConfig(config, targetApi, targetAuth, { nonInteractive });
+    const loaded = await loadTomlConfigRequired(configPath);
+    const auth = await resolveAuthHeader({ flags, config: loaded, nonInteractive });
+    const targetApi = resolveApiBase(flags, loaded);
+    await applyConfig(loaded, targetApi, auth, { nonInteractive });
     process.exit(0);
   }
 
   if (cmd === "login") {
-    const user = flags.user ?? flags.username;
-    const pass = flags.pass ?? flags.password;
-    if (!user || !pass) {
-      throw new Error("missing --user/--pass");
-    }
+    const credentials = await resolveAdminCredentialsInteractive({
+      flags,
+      config,
+      nonInteractive
+    });
+    const user = credentials.user;
+    const pass = credentials.pass;
     const data = await requestJson("POST", `${apiBase}/api/auth/login`, { username: user, password: pass }, null);
     if (!data.ok) {
       throw new Error(data.error ?? "login failed");
@@ -54,26 +56,38 @@ try {
   }
 
   if (cmd === "quickstart") {
+    const auth = await resolveAuthHeader({ flags, config, nonInteractive });
+    const gateway = resolveGatewayOverrides(flags, config);
     const payload = {
       startGateway: flags["start-gateway"] !== false,
-      runProbe: Boolean(flags["run-probe"])
+      runProbe: Boolean(flags["run-probe"]),
+      ...(gateway.host ? { gatewayHost: gateway.host } : {}),
+      ...(gateway.port ? { gatewayPort: gateway.port } : {})
     };
     await runJob(`${apiBase}/api/jobs/quickstart`, payload, auth);
     process.exit(0);
   }
 
   if (cmd === "probe") {
+    const auth = await resolveAuthHeader({ flags, config, nonInteractive });
+    const gateway = resolveGatewayOverrides(flags, config);
     const payload = {
       startGateway: flags["start-gateway"] !== false,
-      runProbe: true
+      runProbe: true,
+      ...(gateway.host ? { gatewayHost: gateway.host } : {}),
+      ...(gateway.port ? { gatewayPort: gateway.port } : {})
     };
     await runJob(`${apiBase}/api/jobs/quickstart`, payload, auth);
     process.exit(0);
   }
 
   if (cmd === "discord-token") {
-    const token = flags.token ?? flags.t;
-    if (!token) throw new Error("missing --token");
+    const auth = await resolveAuthHeader({ flags, config, nonInteractive });
+    const token = await resolveRequiredString({
+      value: flags.token ?? flags.t ?? config?.discord?.token,
+      message: "Discord bot token",
+      nonInteractive
+    });
     const data = await requestJson(
       "POST",
       `${apiBase}/api/discord/token`,
@@ -86,32 +100,69 @@ try {
   }
 
   if (cmd === "ai-auth") {
-    const provider = flags.provider ?? flags.p;
-    const apiKey = flags.key ?? flags.k;
-    if (!provider || !apiKey) throw new Error("missing --provider/--key");
+    const auth = await resolveAuthHeader({ flags, config, nonInteractive });
+    const provider = await resolveRequiredString({
+      value: flags.provider ?? flags.p ?? config?.ai?.provider,
+      message: "AI provider",
+      nonInteractive
+    });
+    const apiKey = await resolveRequiredString({
+      value: flags.key ?? flags.k ?? config?.ai?.key,
+      message: "AI API key",
+      nonInteractive
+    });
     await runJob(`${apiBase}/api/jobs/ai/auth`, { provider, apiKey }, auth);
     process.exit(0);
   }
 
   if (cmd === "pairing-approve") {
-    const code = flags.code ?? flags.c;
-    if (!code) throw new Error("missing --code");
+    const auth = await resolveAuthHeader({ flags, config, nonInteractive });
+    const code = await resolvePairingCode({
+      flags,
+      config,
+      nonInteractive
+    });
+    const continueAfter = Boolean(flags.continue || flags["run-probe"]);
     await runJob(`${apiBase}/api/jobs/discord/pairing`, { code }, auth);
+    if (continueAfter) {
+      const gateway = resolveGatewayOverrides(flags, config);
+      await runProbeJob(apiBase, auth, {
+        gatewayHost: gateway.host,
+        gatewayPort: gateway.port
+      });
+    }
     process.exit(0);
   }
 
   if (cmd === "pairing-prompt") {
     ensureInteractive(nonInteractive);
-    const code = await promptForInput("请输入配对码并回车确认（留空取消）：");
+    const auth = await resolveAuthHeader({ flags, config, nonInteractive });
+    const continueAfter = Boolean(flags.continue || flags["run-probe"]);
+    const code = await promptForValue({
+      message: "请输入配对码并回车确认（留空取消）：",
+      normalize: (value) => value.toUpperCase()
+    });
     if (!code) throw new Error("missing pairing code");
     await runJob(`${apiBase}/api/jobs/discord/pairing`, { code }, auth);
+    if (continueAfter) {
+      const gateway = resolveGatewayOverrides(flags, config);
+      await runProbeJob(apiBase, auth, {
+        gatewayHost: gateway.host,
+        gatewayPort: gateway.port
+      });
+    }
     process.exit(0);
   }
 
   if (cmd === "pairing-wait") {
-    const timeoutMs = parseNumberFlag(flags.timeout ?? flags["timeout-ms"]);
-    const pollMs = parseNumberFlag(flags.poll ?? flags["poll-ms"]);
-    const notify = Boolean(flags.notify);
+    const auth = await resolveAuthHeader({ flags, config, nonInteractive });
+    const timeoutMs = parseNumberFlag(
+      flags.timeout ?? flags["timeout-ms"] ?? config?.pairing?.timeoutMs ?? config?.pairing?.timeout
+    );
+    const pollMs = parseNumberFlag(
+      flags.poll ?? flags["poll-ms"] ?? config?.pairing?.pollMs ?? config?.pairing?.poll
+    );
+    const notify = Boolean(flags.notify ?? config?.pairing?.notify);
     const payload = {};
     if (timeoutMs) payload.timeoutMs = timeoutMs;
     if (pollMs) payload.pollMs = pollMs;
@@ -121,6 +172,7 @@ try {
   }
 
   if (cmd === "gateway-start") {
+    const auth = await resolveAuthHeader({ flags, config, nonInteractive });
     const data = await requestJson(
       "POST",
       `${apiBase}/api/processes/start`,
@@ -142,8 +194,10 @@ function parseArgs(argv) {
   const flags = {};
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
-    if (!arg.startsWith("--")) continue;
-    const raw = arg.slice(2);
+    if (!arg.startsWith("-")) continue;
+    const isLong = arg.startsWith("--");
+    const raw = arg.slice(isLong ? 2 : 1);
+    if (!raw) continue;
     const [key, inlineValue] = raw.split("=", 2);
     if (key.startsWith("no-")) {
       flags[key.slice(3)] = false;
@@ -164,11 +218,22 @@ function parseArgs(argv) {
   return { flags };
 }
 
-function resolveApiBase(flags) {
+function resolveConfigPath(flags) {
+  const candidate =
+    flags.config ??
+    flags.c ??
+    process.env.MANAGER_CONFIG ??
+    process.env.MANAGER_CONFIG_PATH ??
+    "manager.toml";
+  return typeof candidate === "string" && candidate.trim() ? candidate.trim() : "manager.toml";
+}
+
+function resolveApiBase(flags, config) {
   const envBase = process.env.MANAGER_API_URL ?? process.env.MANAGER_API_BASE;
   const port = process.env.MANAGER_API_PORT ?? "17321";
+  const configBase = resolveApiBaseFromConfig(config);
   const base =
-    flags.api ?? flags["api-base"] ?? envBase ?? `http://127.0.0.1:${port}`;
+    flags.api ?? flags["api-base"] ?? configBase ?? envBase ?? `http://127.0.0.1:${port}`;
   return base.replace(/\/+$/, "");
 }
 
@@ -179,29 +244,63 @@ function resolveApiBaseFromConfig(config) {
   return base.replace(/\/+$/, "");
 }
 
-function resolveAuth(flags) {
+function resolveAdminCredentials(params) {
   const user =
-    flags.user ??
-    flags.username ??
+    params.flags.user ??
+    params.flags.username ??
+    params.config?.admin?.user ??
     process.env.MANAGER_AUTH_USER ??
     process.env.MANAGER_ADMIN_USER ??
     "";
   const pass =
-    flags.pass ??
-    flags.password ??
+    params.flags.pass ??
+    params.flags.password ??
+    params.config?.admin?.pass ??
     process.env.MANAGER_AUTH_PASS ??
     process.env.MANAGER_ADMIN_PASS ??
     "";
-  if (!user || !pass) return null;
+  return {
+    user: typeof user === "string" ? user.trim() : "",
+    pass: typeof pass === "string" ? pass : ""
+  };
+}
+
+async function resolveAuthHeader(params) {
+  const base = resolveAdminCredentials(params);
+  const user = base.user
+    ? base.user
+    : await resolveRequiredString({
+        value: "",
+        message: "管理员用户名",
+        nonInteractive: params.nonInteractive
+      });
+  const pass = base.pass
+    ? base.pass
+    : await resolveRequiredString({
+        value: "",
+        message: "管理员密码",
+        nonInteractive: params.nonInteractive
+      });
   return buildBasicAuth(user, pass);
 }
 
-function resolveAuthFromConfig(config) {
-  const admin = config?.admin ?? {};
-  const user = typeof admin.user === "string" ? admin.user : "";
-  const pass = typeof admin.pass === "string" ? admin.pass : "";
-  if (!user || !pass) return null;
-  return buildBasicAuth(user, pass);
+async function resolveAdminCredentialsInteractive(params) {
+  const base = resolveAdminCredentials(params);
+  const user = base.user
+    ? base.user
+    : await resolveRequiredString({
+        value: "",
+        message: "管理员用户名",
+        nonInteractive: params.nonInteractive
+      });
+  const pass = base.pass
+    ? base.pass
+    : await resolveRequiredString({
+        value: "",
+        message: "管理员密码",
+        nonInteractive: params.nonInteractive
+      });
+  return { user, pass };
 }
 
 function buildQuery(params) {
@@ -243,6 +342,56 @@ async function runJob(url, payload, authHeader) {
   }
   const base = url.replace(/\/api\/jobs\/.+$/, "");
   await streamJob(`${base}/api/jobs/${res.jobId}/stream`, authHeader);
+}
+
+function resolveGatewayOverrides(flags, config) {
+  const host = flags["gateway-host"] ?? config?.gateway?.host ?? null;
+  const portValue = flags["gateway-port"] ?? config?.gateway?.port ?? null;
+  return {
+    host: typeof host === "string" ? host.trim() : null,
+    port: parseNumberFlag(portValue)
+  };
+}
+
+async function resolveRequiredString(params) {
+  const trimmed = typeof params.value === "string" ? params.value.trim() : "";
+  if (trimmed) return trimmed;
+  if (params.nonInteractive) {
+    throw new Error(`missing ${params.message}`);
+  }
+  const input = await promptForValue({
+    message: `${params.message}：`,
+    normalize: (value) => value
+  });
+  const normalized = input.trim();
+  if (!normalized) {
+    throw new Error(`missing ${params.message}`);
+  }
+  return normalized;
+}
+
+async function resolvePairingCode(params) {
+  const raw =
+    params.flags.code ??
+    params.flags.c ??
+    (Array.isArray(params.config?.pairing?.codes) && params.config.pairing.codes.length === 1
+      ? params.config.pairing.codes[0]
+      : null);
+  if (typeof raw === "string" && raw.trim()) {
+    return raw.trim().toUpperCase();
+  }
+  if (params.nonInteractive) {
+    throw new Error("missing --code (or pairing.codes in config)");
+  }
+  const hint = Array.isArray(params.config?.pairing?.codes)
+    ? `候选：${params.config.pairing.codes.join(", ")}`
+    : "";
+  const code = await promptForValue({
+    message: `请输入配对码并回车确认（留空取消）${hint ? `（${hint}）` : ""}：`,
+    normalize: (value) => value.toUpperCase()
+  });
+  if (!code) throw new Error("missing pairing code");
+  return code;
 }
 
 async function streamJob(url, authHeader) {
@@ -331,6 +480,7 @@ Commands:
 
 Common flags:
   --api <base>            API base (default: http://127.0.0.1:17321)
+  --config <path>         TOML config path (default: manager.toml)
   --user <user>           Auth username (or MANAGER_AUTH_USER)
   --pass <pass>           Auth password (or MANAGER_AUTH_PASS)
   --non-interactive       Disable prompts (or MANAGER_NON_INTERACTIVE=1)
@@ -376,25 +526,37 @@ async function applyConfig(config, apiBaseUrl, authHeader, options) {
     }
   }
 
-  if (startGateway || runProbe) {
-    console.log("apply: quickstart");
-    await runJob(
-      `${apiBaseUrl}/api/jobs/quickstart`,
-      { startGateway, runProbe },
-      authHeader
-    );
-  }
-
   const pairingWait = pairing.wait === true;
   const pairingPrompt = pairing.prompt === true || pairing.manual === true;
   const pairingTimeoutMs = parseNumberFlag(pairing.timeoutMs ?? pairing.timeout);
   const pairingPollMs = parseNumberFlag(pairing.pollMs ?? pairing.poll);
   const pairingNotify = Boolean(pairing.notify);
+  const hasPairingCodes = Array.isArray(pairing.codes) && pairing.codes.length > 0;
+  const needsPairing = pairingPrompt || pairingWait || hasPairingCodes;
+  const shouldProbeNow = runProbe && !needsPairing;
+
+  if (startGateway || shouldProbeNow) {
+    console.log("apply: quickstart");
+    const payload = {
+      startGateway,
+      runProbe: shouldProbeNow,
+      ...(gateway.host ? { gatewayHost: gateway.host } : {}),
+      ...(gateway.port ? { gatewayPort: gateway.port } : {})
+    };
+    await runJob(
+      `${apiBaseUrl}/api/jobs/quickstart`,
+      payload,
+      authHeader
+    );
+  }
 
   if (pairingPrompt) {
     console.log("apply: pairing prompt");
     ensureInteractive(options?.nonInteractive ?? false);
-    const code = await promptForInput("请输入配对码并回车确认（留空取消）：");
+    const code = await promptForValue({
+      message: "请输入配对码并回车确认（留空取消）：",
+      normalize: (value) => value.toUpperCase()
+    });
     if (!code) {
       throw new Error("pairing code required");
     }
@@ -410,13 +572,21 @@ async function applyConfig(config, apiBaseUrl, authHeader, options) {
     await runJob(`${apiBaseUrl}/api/jobs/discord/pairing/wait`, payload, authHeader);
   }
 
-  if (!pairingPrompt && !pairingWait && Array.isArray(pairing.codes) && pairing.codes.length) {
+  if (!pairingPrompt && !pairingWait && hasPairingCodes) {
     for (const raw of pairing.codes) {
       const code = String(raw).trim();
       if (!code) continue;
       console.log(`apply: pairing approve (${code})`);
       await runJob(`${apiBaseUrl}/api/jobs/discord/pairing`, { code }, authHeader);
     }
+  }
+
+  if (runProbe && needsPairing) {
+    console.log("apply: probe");
+    await runProbeJob(apiBaseUrl, authHeader, {
+      gatewayHost: gateway.host,
+      gatewayPort: gateway.port
+    });
   }
 }
 
@@ -431,19 +601,31 @@ function isNonInteractive(flags) {
 function ensureInteractive(nonInteractiveFlag) {
   if (!nonInteractiveFlag) return;
   throw new Error(
-    "non-interactive: pairing code required. Use pairing-approve after you get the code."
+    "non-interactive: pairing code required. Use pairing-approve --continue after you get the code."
   );
 }
 
-async function promptForInput(message) {
+async function runProbeJob(apiBaseUrl, authHeader, gateway) {
+  const payload = {
+    startGateway: false,
+    runProbe: true,
+    ...(gateway?.gatewayHost ? { gatewayHost: gateway.gatewayHost } : {}),
+    ...(gateway?.gatewayPort ? { gatewayPort: gateway.gatewayPort } : {})
+  };
+  await runJob(`${apiBaseUrl}/api/jobs/quickstart`, payload, authHeader);
+}
+
+async function promptForValue(params) {
   if (!process.stdin.isTTY) {
     throw new Error("stdin is not interactive");
   }
   const readline = await import("node:readline/promises");
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
   try {
-    const answer = await rl.question(message);
-    return answer.trim().toUpperCase();
+    const answer = await rl.question(params.message);
+    const raw = answer.trim();
+    if (!raw) return "";
+    return params.normalize ? params.normalize(raw) : raw;
   } finally {
     rl.close();
   }
@@ -460,6 +642,25 @@ async function loadTomlConfig(configPath) {
   const fs = await import("node:fs/promises");
   const text = await fs.readFile(configPath, "utf-8");
   return parseToml(text);
+}
+
+async function loadTomlConfigOptional(configPath) {
+  try {
+    return await loadTomlConfig(configPath);
+  } catch (err) {
+    if (err && typeof err === "object" && "code" in err && err.code === "ENOENT") {
+      return null;
+    }
+    throw err;
+  }
+}
+
+async function loadTomlConfigRequired(configPath) {
+  const config = await loadTomlConfigOptional(configPath);
+  if (!config) {
+    throw new Error(`config not found: ${configPath}`);
+  }
+  return config;
 }
 
 function parseToml(input) {
