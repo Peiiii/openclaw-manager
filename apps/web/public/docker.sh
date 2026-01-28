@@ -30,5 +30,16 @@ docker run -d --name "$NAME" -p "${PORT}:${PORT}" \
   node apps/api/scripts/create-admin.mjs --username \"\$MANAGER_ADMIN_USER\" --password \"\$MANAGER_ADMIN_PASS\" --config /etc/clawdbot-manager/config.json; \
   exec node /opt/moltbot-manager/apps/api/dist/index.js"
 
+if command -v curl >/dev/null 2>&1; then
+  for _ in {1..120}; do
+    if curl -fsS "http://127.0.0.1:${PORT}/health" >/dev/null 2>&1; then
+      break
+    fi
+    sleep 1
+  done
+else
+  echo "[manager] curl not found; skip readiness check."
+fi
+
 echo "[manager] Open: http://127.0.0.1:${PORT}"
 echo "[manager] Login: ${ADMIN_USER} / ${ADMIN_PASS}"

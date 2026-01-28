@@ -13,6 +13,8 @@ curl -fsSL https://clawdbot-manager.pages.dev/docker.sh | bash
 bash scripts/docker.sh
 ```
 
+首次运行会自动拉取依赖并构建，可能需要 1-3 分钟；脚本会等待 `/health` 就绪后再输出链接。
+
 自定义管理员账号/密码/端口（示例）：
 ```bash
 MANAGER_ADMIN_USER=admin \
