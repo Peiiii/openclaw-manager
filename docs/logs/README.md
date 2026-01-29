@@ -32,6 +32,7 @@
 - `docs/logs/v0.0.30-stop-all-launchd/README.md`
 - `docs/logs/v0.0.31-stop-all-retry/README.md`
 - `docs/logs/v0.0.32-docs-index/README.md`
+- `docs/logs/v0.0.33-dev-docs/README.md`
 
 ## 写日志的标准
 
