@@ -96,6 +96,15 @@ pnpm manager:pairing-approve -- --code "<PAIRING_CODE>" --continue
 pnpm deploy:pages
 ```
 
+### F) 本地安装脚本验证（对标线上 curl 安装）
+
+在仓库根目录执行本地脚本，效果等同于：
+`curl -fsSL https://clawdbot-manager.pages.dev/install.sh | ...`
+
+```bash
+MANAGER_ADMIN_USER=admin MANAGER_ADMIN_PASS=pass bash scripts/install.sh
+```
+
 ## 场景 5：贡献协作流程
 
 目标：保证协作一致性与可追溯性。
