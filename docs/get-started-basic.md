@@ -31,6 +31,9 @@ irm https://clawdbot-manager.pages.dev/install.ps1 | iex
 - 本机访问：`http://127.0.0.1:17321/`
 - 远程访问：`http://<your-host>:17321/`
 
+如果是 VPS，请确保防火墙与安全组放行 `17321` 端口。  
+如需仅本机访问，可设置 `MANAGER_API_HOST=127.0.0.1`。
+
 ## 3) 登录并完成向导
 
 使用安装时设置的管理员账号登录，然后按向导完成：
@@ -53,4 +56,4 @@ curl -fsS -u admin:pass http://<your-host>:17321/api/status
 
 - `MANAGER_ADMIN_USER` / `MANAGER_ADMIN_PASS`：管理员账号
 - `MANAGER_API_PORT`：API 端口（默认 `17321`）
-- `MANAGER_API_HOST`：API 绑定地址（默认 `0.0.0.0`）
+- `MANAGER_API_HOST`：API 绑定地址（默认 `0.0.0.0`，对外可访问）

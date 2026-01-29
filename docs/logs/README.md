@@ -42,6 +42,9 @@
 - `docs/logs/v0.0.40-get-started-basic/README.md`
 - `docs/logs/v0.0.41-get-started-docker/README.md`
 - `docs/logs/v0.0.42-docker-admin-env/README.md`
+- `docs/logs/v0.0.43-remote-access-note/README.md`
+- `docs/logs/v0.0.44-docker-public-url/README.md`
+- `docs/logs/v0.0.45-user-intent-analysis/README.md`
 
 ## 写日志的标准
 

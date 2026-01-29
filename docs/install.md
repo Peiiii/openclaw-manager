@@ -42,6 +42,8 @@ curl -fsSL https://clawdbot-manager.pages.dev/docker.sh | bash
 2) 使用安装脚本设置的管理员账号登录
 3) 按向导依次完成：CLI 安装、网关启动、Discord Token、AI Provider、配对、探测
 
+提示：脚本默认绑定 `MANAGER_API_HOST=0.0.0.0`，VPS 需放行 `17321` 端口；如需仅本机访问，设置 `MANAGER_API_HOST=127.0.0.1`。
+
 ## 常用环境变量
 
 Linux / macOS（示例）：

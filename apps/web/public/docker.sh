@@ -41,5 +41,15 @@ else
   echo "[manager] curl not found; skip readiness check."
 fi
 
-echo "[manager] Open: http://127.0.0.1:${PORT}"
+PUBLIC_HOST="${MANAGER_PUBLIC_HOST:-}"
+if [[ -z "$PUBLIC_HOST" ]] && command -v curl >/dev/null 2>&1; then
+  PUBLIC_HOST="$(curl -fsS https://api.ipify.org 2>/dev/null || true)"
+fi
+
+echo "[manager] Open (local): http://127.0.0.1:${PORT}"
+if [[ -n "$PUBLIC_HOST" ]]; then
+  echo "[manager] Open (public): http://${PUBLIC_HOST}:${PORT}"
+else
+  echo "[manager] Open (public): set MANAGER_PUBLIC_HOST to print public URL"
+fi
 echo "[manager] Login: ${ADMIN_USER} / ${ADMIN_PASS}"
