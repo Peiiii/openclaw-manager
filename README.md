@@ -48,6 +48,7 @@ curl -fsSL https://clawdbot-manager.pages.dev/install.sh | MANAGER_ADMIN_USER=ad
 - Docker 部署：[docs/docker.md](docs/docker.md)
 - CLI 快速验证：[docs/cli.md](docs/cli.md)
 - 开发者指南：[docs/dev.md](docs/dev.md)
+- 发布部署：[docs/deploy.md](docs/deploy.md)
 
 ## Windows 一键安装（PowerShell）
 

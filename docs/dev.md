@@ -142,6 +142,7 @@ MANAGER_ADMIN_USER=admin MANAGER_ADMIN_PASS=pass bash scripts/install.sh
 pnpm deploy:pages
 ```
 
+发布细节见：`docs/deploy.md`。  
 注：若涉及 npm 发布流程，参考 `docs/workflows/npm-release-process.md`。
 
 ## 目录结构速览
