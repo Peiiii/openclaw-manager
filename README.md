@@ -43,6 +43,7 @@ curl -fsSL https://clawdbot-manager.pages.dev/install.sh | MANAGER_ADMIN_USER=ad
 ## 文档索引
 
 - 基础安装（非 Docker）：[docs/get-started-basic.md](docs/get-started-basic.md)
+- Docker 快速开始：[docs/get-started-docker.md](docs/get-started-docker.md)
 - 安装与前端使用：[docs/install.md](docs/install.md)
 - Docker 部署：[docs/docker.md](docs/docker.md)
 - CLI 快速验证：[docs/cli.md](docs/cli.md)

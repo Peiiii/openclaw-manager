@@ -3,6 +3,7 @@
 本指南面向需要通过脚本一键部署并使用前端控制台的用户。
 
 基础非 Docker 场景请先看：[docs/get-started-basic.md](docs/get-started-basic.md)。
+Docker 场景请先看：[docs/get-started-docker.md](docs/get-started-docker.md)。
 
 ## 一键安装
 
