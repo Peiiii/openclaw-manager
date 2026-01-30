@@ -10,12 +10,12 @@ Docker 场景请先看：[docs/get-started-docker.md](docs/get-started-docker.md
 ### Linux / macOS
 
 ```bash
-curl -fsSL https://clawdbot-manager.pages.dev/install.sh | bash
+curl -fsSL https://claw.cool/install.sh | bash
 ```
 
 一行带账号密码（推荐）：
 ```bash
-curl -fsSL https://clawdbot-manager.pages.dev/install.sh | MANAGER_ADMIN_USER=admin MANAGER_ADMIN_PASS=pass bash
+curl -fsSL https://claw.cool/install.sh | MANAGER_ADMIN_USER=admin MANAGER_ADMIN_PASS=pass bash
 ```
 
 提示：安装过程会提示输入管理员账号/密码；如在非交互环境（CI/脚本）运行，请提前设置
@@ -24,13 +24,13 @@ curl -fsSL https://clawdbot-manager.pages.dev/install.sh | MANAGER_ADMIN_USER=ad
 ### Windows (PowerShell)
 
 ```powershell
-iwr https://clawdbot-manager.pages.dev/install.ps1 -UseBasicParsing | iex
+iwr https://claw.cool/install.ps1 -UseBasicParsing | iex
 ```
 
 ## Docker 一键启动
 
 ```bash
-curl -fsSL https://clawdbot-manager.pages.dev/docker.sh | bash
+curl -fsSL https://claw.cool/docker.sh | bash
 ```
 
 更多参数说明见 [Docker 部署指南](/docker)。
@@ -53,7 +53,7 @@ MANAGER_ADMIN_USER=admin \
 MANAGER_ADMIN_PASS=pass \
 MANAGER_API_PORT=17321 \
 MANAGER_AUTO_INSTALL_NODE=1 \
-curl -fsSL https://clawdbot-manager.pages.dev/install.sh | bash
+curl -fsSL https://claw.cool/install.sh | bash
 ```
 
 常见变量：
@@ -69,7 +69,7 @@ Windows PowerShell（示例）：
 $env:MANAGER_ADMIN_USER="admin"
 $env:MANAGER_ADMIN_PASS="pass"
 $env:MANAGER_API_PORT="17321"
-iwr https://clawdbot-manager.pages.dev/install.ps1 -UseBasicParsing | iex
+iwr https://claw.cool/install.ps1 -UseBasicParsing | iex
 ```
 
 ## 常见问题

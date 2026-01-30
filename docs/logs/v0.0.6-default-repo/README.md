@@ -11,8 +11,8 @@
 - `pnpm -r --if-present lint`
 - `pnpm -r --if-present build`
 - 冒烟（线上脚本可访问性，非仓库目录）：
-  - `curl -fsSL https://clawdbot-manager.pages.dev/install.sh | head -n 5`
-  - `curl -fsSL https://clawdbot-manager.pages.dev/install.ps1 | head -n 5`
+  - `curl -fsSL https://claw.cool/install.sh | head -n 5`
+  - `curl -fsSL https://claw.cool/install.ps1 | head -n 5`
 
 ## 发布/部署方式
 

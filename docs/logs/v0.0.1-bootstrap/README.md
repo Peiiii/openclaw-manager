@@ -46,7 +46,7 @@
     - `CLOUDFLARE_PAGES_PROJECT`（默认 `clawdbot-manager`）
     - `CLOUDFLARE_PAGES_BRANCH`（默认 `main`）
   - 线上冒烟验证：`curl https://<project>.pages.dev`
-  - 部署地址：`https://clawdbot-manager.pages.dev`
+  - 部署地址：`https://claw.cool`
 
 ## 相关文档
 

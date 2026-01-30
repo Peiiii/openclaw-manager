@@ -5,7 +5,7 @@
 ## 一键脚本（推荐）
 
 ```bash
-curl -fsSL https://clawdbot-manager.pages.dev/docker.sh | bash
+curl -fsSL https://claw.cool/docker.sh | bash
 ```
 
 如果你已经 clone 了仓库，可以直接运行本地脚本：
@@ -20,7 +20,7 @@ bash scripts/docker.sh
 MANAGER_ADMIN_USER=admin \
 MANAGER_ADMIN_PASS=pass \
 MANAGER_API_PORT=17321 \
-curl -fsSL https://clawdbot-manager.pages.dev/docker.sh | bash
+curl -fsSL https://claw.cool/docker.sh | bash
 ```
 
 打开：

@@ -7,7 +7,7 @@
 
 ## 使用方式
 
-- `MANAGER_PUBLIC_HOST=<your-public-ip-or-domain> curl -fsSL https://clawdbot-manager.pages.dev/docker.sh | bash`
+- `MANAGER_PUBLIC_HOST=<your-public-ip-or-domain> curl -fsSL https://claw.cool/docker.sh | bash`
 
 ## 验证方式
 

@@ -9,7 +9,7 @@
 推荐（带管理员账号）：
 
 ```bash
-curl -fsSL https://clawdbot-manager.pages.dev/install.sh | MANAGER_ADMIN_USER=admin MANAGER_ADMIN_PASS=pass bash
+curl -fsSL https://claw.cool/install.sh | MANAGER_ADMIN_USER=admin MANAGER_ADMIN_PASS=pass bash
 ```
 
 如需自动安装 Node（无交互环境）：
@@ -18,13 +18,13 @@ curl -fsSL https://clawdbot-manager.pages.dev/install.sh | MANAGER_ADMIN_USER=ad
 MANAGER_AUTO_INSTALL_NODE=1 \
 MANAGER_ADMIN_USER=admin \
 MANAGER_ADMIN_PASS=pass \
-curl -fsSL https://clawdbot-manager.pages.dev/install.sh | bash
+curl -fsSL https://claw.cool/install.sh | bash
 ```
 
 如需交互输入，去掉环境变量即可：
 
 ```bash
-curl -fsSL https://clawdbot-manager.pages.dev/install.sh | bash
+curl -fsSL https://claw.cool/install.sh | bash
 ```
 
 脚本会检测 Node.js，缺失时会询问是否自动安装。
@@ -34,7 +34,7 @@ curl -fsSL https://clawdbot-manager.pages.dev/install.sh | bash
 ```powershell
 $env:MANAGER_ADMIN_USER="admin"
 $env:MANAGER_ADMIN_PASS="pass"
-irm https://clawdbot-manager.pages.dev/install.ps1 | iex
+irm https://claw.cool/install.ps1 | iex
 ```
 
 ## 2) 打开控制台

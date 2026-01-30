@@ -13,6 +13,12 @@ curl -fsSL https://claw.cool/install.sh | bash
 irm https://claw.cool/install.ps1 | iex
 ```
 
+**Docker**
+```bash
+curl -fsSL https://claw.cool/docker.sh | bash
+```
+更多 Docker 参数与说明请见：[docs/get-started-docker.md](docs/get-started-docker.md) 或 [docs/docker.md](docs/docker.md)。
+
 ### 使用 Manager 安装 OpenClaw
 
 1. 运行安装命令 → Manager 服务自动启动

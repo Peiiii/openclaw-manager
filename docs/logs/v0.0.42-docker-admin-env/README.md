@@ -6,7 +6,7 @@
 
 ## 使用方式
 
-- `MANAGER_ADMIN_USER=admin MANAGER_ADMIN_PASS=pass curl -fsSL https://clawdbot-manager.pages.dev/docker.sh | bash`
+- `MANAGER_ADMIN_USER=admin MANAGER_ADMIN_PASS=pass curl -fsSL https://claw.cool/docker.sh | bash`
 
 ## 验证方式
 
