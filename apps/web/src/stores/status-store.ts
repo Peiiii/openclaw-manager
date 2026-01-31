@@ -1,5 +1,6 @@
 import { create } from "zustand";
 
+import { useAuthStore } from "./auth-store";
 import { useConfigStore } from "./config-store";
 
 export type CommandEntry = {
@@ -86,7 +87,8 @@ export const useStatusStore = create<StatusState>((set, get) => ({
   lastUpdated: null,
   refresh: async () => {
     const config = useConfigStore.getState();
-    const { apiBase, gatewayHost, gatewayPort, authHeader } = config;
+    const auth = useAuthStore.getState();
+    const { apiBase, gatewayHost, gatewayPort } = config;
     set({ loading: true, error: null });
     try {
       const params = new URLSearchParams({
@@ -94,13 +96,13 @@ export const useStatusStore = create<StatusState>((set, get) => ({
         gatewayPort: gatewayPort || "18789"
       });
       const res = await fetch(`${apiBase}/api/status?${params.toString()}`, {
-        headers: authHeader ? { authorization: authHeader } : {}
+        headers: auth.authHeader ? { authorization: auth.authHeader } : {}
       });
       if (res.status === 401) {
-        config.setAuthHeader(null);
-        config.setAuthState(true);
+        auth.clearAuth();
+        auth.setAuthRequired(true);
         set({ loading: false, error: "需要登录" });
-        await config.checkAuth();
+        await auth.checkAuth();
         return;
       }
       if (!res.ok) throw new Error(`Status failed: ${res.status}`);
@@ -122,11 +124,12 @@ export const useStatusStore = create<StatusState>((set, get) => ({
   },
   startProcess: async (id) => {
     const config = useConfigStore.getState();
+    const auth = useAuthStore.getState();
     await fetch(`${config.apiBase}/api/processes/start`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
-        ...(config.authHeader ? { authorization: config.authHeader } : {})
+        ...(auth.authHeader ? { authorization: auth.authHeader } : {})
       },
       body: JSON.stringify({ id })
     });
@@ -134,11 +137,12 @@ export const useStatusStore = create<StatusState>((set, get) => ({
   },
   stopProcess: async (id) => {
     const config = useConfigStore.getState();
+    const auth = useAuthStore.getState();
     await fetch(`${config.apiBase}/api/processes/stop`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
-        ...(config.authHeader ? { authorization: config.authHeader } : {})
+        ...(auth.authHeader ? { authorization: auth.authHeader } : {})
       },
       body: JSON.stringify({ id })
     });
@@ -146,12 +150,13 @@ export const useStatusStore = create<StatusState>((set, get) => ({
   },
   setDiscordToken: async (token) => {
     const config = useConfigStore.getState();
+    const auth = useAuthStore.getState();
     try {
       const res = await fetch(`${config.apiBase}/api/discord/token`, {
         method: "POST",
         headers: {
           "content-type": "application/json",
-          ...(config.authHeader ? { authorization: config.authHeader } : {})
+          ...(auth.authHeader ? { authorization: auth.authHeader } : {})
         },
         body: JSON.stringify({ token })
       });

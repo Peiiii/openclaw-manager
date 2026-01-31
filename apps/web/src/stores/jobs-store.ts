@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 import { streamJobEvents, type JobStreamEvent } from "./job-stream";
+import { useAuthStore } from "./auth-store";
 import { useConfigStore } from "./config-store";
 import { useStatusStore } from "./status-store";
 
@@ -115,6 +116,7 @@ async function runJob(
   options: RunJobOptions
 ): Promise<{ ok: boolean; error?: string }> {
   const config = useConfigStore.getState();
+  const auth = useAuthStore.getState();
   const statusStore = useStatusStore.getState();
   const jobKey = options.jobKey as JobKey;
 
@@ -135,7 +137,7 @@ async function runJob(
       method: "POST",
       headers: {
         "content-type": "application/json",
-        ...(config.authHeader ? { authorization: config.authHeader } : {})
+        ...(auth.authHeader ? { authorization: auth.authHeader } : {})
       },
       body: JSON.stringify(options.payload)
     });
@@ -155,7 +157,7 @@ async function runJob(
 
     await streamJobEvents(
       `${config.apiBase}/api/jobs/${data.jobId}/stream`,
-      config.authHeader,
+      auth.authHeader,
       (event: JobStreamEvent) => {
         set((state) => {
           const current = state[jobKey] as JobState<unknown>;

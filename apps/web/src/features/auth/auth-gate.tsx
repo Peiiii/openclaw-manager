@@ -2,14 +2,14 @@ import { useEffect, useState, type ReactNode } from "react";
 
 import { AuthStep } from "@/components/wizard-steps";
 import { Card } from "@/components/ui/card";
-import { useConfigStore } from "@/stores/config-store";
+import { usePresenter } from "@/presenter/presenter-context";
+import { useAuthStore } from "@/stores/auth-store";
 import { useStatusStore } from "@/stores/status-store";
 
 export function AuthGate({ children }: { children: ReactNode }) {
-  const authRequired = useConfigStore((state) => state.authRequired);
-  const authHeader = useConfigStore((state) => state.authHeader);
-  const checkAuth = useConfigStore((state) => state.checkAuth);
-  const login = useConfigStore((state) => state.login);
+  const presenter = usePresenter();
+  const authRequired = useAuthStore((state) => state.authRequired);
+  const authHeader = useAuthStore((state) => state.authHeader);
   const refreshStatus = useStatusStore((state) => state.refresh);
 
   const [checked, setChecked] = useState(false);
@@ -21,7 +21,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
   useEffect(() => {
     let active = true;
     const run = async () => {
-      await checkAuth();
+      await presenter.auth.checkAuth();
       if (active) {
         setChecked(true);
       }
@@ -30,7 +30,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
     return () => {
       active = false;
     };
-  }, [checkAuth]);
+  }, [presenter]);
 
   if (!checked) {
     return null;
@@ -44,7 +44,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
     if (!username.trim() || !password.trim() || isProcessing) return;
     setIsProcessing(true);
     setMessage(null);
-    const result = await login(username, password);
+    const result = await presenter.auth.login(username, password);
     if (result.ok) {
       setMessage("登录成功，正在加载配置...");
       setPassword("");

@@ -5,6 +5,7 @@
 - 将管理员登录从 onboarding 步骤中移除，改为系统级 Auth Gate
 - 登录通过后才进入 onboarding 流程，避免流程语义混乱与状态冗余
 - 简化 Auth UI：移除“未配置管理员”分支提示
+- auth 拆分为独立 store + manager，遵守 MVP 边界（AuthGate 只订阅 store、动作走 manager）
 
 ## 使用方式
 
@@ -21,4 +22,4 @@
 
 - `pnpm deploy:pages`
 - 按 `docs/workflows/npm-release-process.md` 执行 `pnpm release:publish`
-  - 已发布：`openclaw-manager@0.1.10`
+  - 已发布：`openclaw-manager@0.1.11`
