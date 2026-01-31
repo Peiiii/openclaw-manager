@@ -11,9 +11,9 @@ const DEFAULT_PAIRING_POLL_MS = 3000;
 const DEFAULT_PAIRING_APPROVE_TIMEOUT_MS = 8000;
 
 export function createCliInstallJob(deps: ApiDeps) {
-  const job = deps.jobStore.createJob("Install Clawdbot CLI");
+  const job = deps.jobStore.createJob("Install OpenClaw CLI");
   deps.jobStore.startJob(job.id);
-  deps.jobStore.appendLog(job.id, "开始安装 Clawdbot CLI...");
+  deps.jobStore.appendLog(job.id, "开始安装 OpenClaw CLI...");
 
   const timeoutMs = parsePositiveInt(process.env.MANAGER_CLI_INSTALL_TIMEOUT_MS) ?? 600_000;
 

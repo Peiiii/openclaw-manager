@@ -65,7 +65,7 @@ MANAGER_ADMIN_USER=admin MANAGER_ADMIN_PASS=pass bash scripts/install.sh
 适合模拟“用户在 VPS 上通过 curl 安装”的流程。
 
 ```bash
-curl -fsSL https://claw.cool/install.sh | MANAGER_ADMIN_USER=admin MANAGER_ADMIN_PASS=pass bash
+curl -fsSL https://openclaw-manager.com/install.sh | MANAGER_ADMIN_USER=admin MANAGER_ADMIN_PASS=pass bash
 ```
 
 无交互自动安装 Node：
@@ -74,7 +74,7 @@ curl -fsSL https://claw.cool/install.sh | MANAGER_ADMIN_USER=admin MANAGER_ADMIN
 MANAGER_AUTO_INSTALL_NODE=1 \
 MANAGER_ADMIN_USER=admin \
 MANAGER_ADMIN_PASS=pass \
-curl -fsSL https://claw.cool/install.sh | bash
+curl -fsSL https://openclaw-manager.com/install.sh | bash
 ```
 
 ### 3) Docker 验证
@@ -82,13 +82,13 @@ curl -fsSL https://claw.cool/install.sh | bash
 适合模拟 VPS 或隔离环境。
 
 ```bash
-curl -fsSL https://claw.cool/docker.sh | bash
+curl -fsSL https://openclaw-manager.com/docker.sh | bash
 ```
 
 **带账号密码（推荐）**
 
 ```bash
-MANAGER_ADMIN_USER=admin MANAGER_ADMIN_PASS=pass curl -fsSL https://claw.cool/docker.sh | bash
+MANAGER_ADMIN_USER=admin MANAGER_ADMIN_PASS=pass curl -fsSL https://openclaw-manager.com/docker.sh | bash
 ```
 
 **本机脚本验证（等同线上 docker.sh）**

@@ -8,3 +8,4 @@ dist/
 coverage/
 manager.toml
 clawdbot.manager.toml
+.npmrc.publish.local

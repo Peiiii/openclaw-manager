@@ -1,10 +1,10 @@
-# Clawdbot Manager CLI 使用指南
+# OpenClaw Manager CLI 使用指南
 
 本指南面向需要通过命令行完成配置与配对的用户。
 
 ## 前置条件
 
-- 已启动 Clawdbot Manager API
+- 已启动 OpenClaw Manager API
 - 已准备管理员账号、Discord Bot Token、AI Provider 与 API Key
 - 在仓库内运行命令（`pnpm manager:*`），或直接调用脚本
 
@@ -187,7 +187,7 @@ pnpm manager:stop-all -- --dry-run
 ```bash
 pnpm manager:reset
 ```
-保留 Clawdbot 数据（仅清理 manager 相关）：
+保留 OpenClaw 数据（仅清理 manager 相关）：
 ```bash
 pnpm manager:reset -- --keep-clawdbot
 ```

@@ -11,7 +11,7 @@
 - `pnpm -r --if-present lint`
 - `pnpm -r --if-present build`
 - 冒烟（非仓库目录）：
-  - `MANAGER_DOCKER_NAME=moltbot-manager-smoke MANAGER_CONFIG_VOLUME=moltbot-manager-smoke MANAGER_API_PORT=17436 bash /Users/peiwang/Projects/clawdbot-manager/apps/web/public/docker.sh`
+  - `MANAGER_DOCKER_NAME=openclaw-manager-smoke MANAGER_CONFIG_VOLUME=openclaw-manager-smoke MANAGER_API_PORT=17436 bash /Users/peiwang/Projects/clawdbot-manager/apps/web/public/docker.sh`
   - `curl -fsS http://127.0.0.1:17436/health`
 
 ## 发布/部署方式

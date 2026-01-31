@@ -1,8 +1,8 @@
-# Clawdbot Manager 规划（v0.1 目标）
+# OpenClaw Manager 规划（v0.1 目标）
 
 ## 产品定位
 
-- 面向本机/VM/VPS 的 Clawdbot 全流程管理入口
+- 面向本机/VM/VPS 的 OpenClaw 全流程管理入口
 - 以最小输入完成安装、配置、验证、运行
 - 可扩展到多机管理、远程部署与集群化控制
 

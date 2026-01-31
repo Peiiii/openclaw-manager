@@ -29,7 +29,7 @@ pnpm build
 
 # smoke-check（非仓库目录）
 cd /tmp
-curl -fsS https://claw.cool/ >/dev/null
+curl -fsS https://openclaw-manager.com/ >/dev/null
 ```
 
 验收点：

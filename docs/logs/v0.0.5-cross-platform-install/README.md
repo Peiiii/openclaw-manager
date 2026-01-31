@@ -11,12 +11,12 @@
 - `pnpm -r --if-present lint`
 - `pnpm -r --if-present build`
 - 冒烟（线上脚本可访问性，非仓库目录）：
-  - `curl -fsSL https://claw.cool/install.sh | head -n 5`
-  - `curl -fsSL https://claw.cool/install.ps1 | head -n 5`
+  - `curl -fsSL https://openclaw-manager.com/install.sh | head -n 5`
+  - `curl -fsSL https://openclaw-manager.com/install.ps1 | head -n 5`
 
 ## 发布/部署方式
 
 - `pnpm deploy:pages`
 - 更新后脚本地址：
-  - `https://claw.cool/install.sh`
-  - `https://claw.cool/install.ps1`
+  - `https://openclaw-manager.com/install.sh`
+  - `https://openclaw-manager.com/install.ps1`

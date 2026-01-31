@@ -9,9 +9,9 @@
 ## 使用方式
 
 - 自动安装 Node：
-  - `MANAGER_AUTO_INSTALL_NODE=1 curl -fsSL https://claw.cool/install.sh | bash`
+  - `MANAGER_AUTO_INSTALL_NODE=1 curl -fsSL https://openclaw-manager.com/install.sh | bash`
 - 打印公网链接：
-  - `MANAGER_PUBLIC_HOST=<public-ip-or-domain> curl -fsSL https://claw.cool/install.sh | bash`
+  - `MANAGER_PUBLIC_HOST=<public-ip-or-domain> curl -fsSL https://openclaw-manager.com/install.sh | bash`
 
 ## 验证方式
 

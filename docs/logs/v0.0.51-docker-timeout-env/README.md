@@ -7,7 +7,7 @@
 
 ## 使用方式
 
-- `MANAGER_GATEWAY_TIMEOUT_MS=60000 curl -fsSL https://claw.cool/docker.sh | bash`
+- `MANAGER_GATEWAY_TIMEOUT_MS=60000 curl -fsSL https://openclaw-manager.com/docker.sh | bash`
 
 ## 验证方式
 

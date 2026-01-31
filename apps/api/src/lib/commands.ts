@@ -41,8 +41,8 @@ export function buildCommandRegistry(root: string): CommandDefinition[] {
   return [
     {
       id: "install-cli",
-      title: "Install Clawdbot CLI",
-      description: "Install the latest Clawdbot CLI (may require sudo)",
+      title: "Install OpenClaw CLI",
+      description: "Install the latest OpenClaw CLI (may require sudo)",
       command: "npm",
       args: ["i", "-g", "clawdbot@latest"],
       cwd: root,

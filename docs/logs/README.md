@@ -60,6 +60,11 @@
 - `docs/logs/v0.0.58-onboarding-orchestrator/README.md`
 - `docs/logs/v0.0.59-windows-install-log/README.md`
 - `docs/logs/v0.0.60-windows-install-lightweight/README.md`
+- `docs/logs/v0.0.61-npm-cli-start/README.md`
+- `docs/logs/v0.0.62-npm-release-pipeline/README.md`
+- `docs/logs/v0.0.63-npm-auth-local/README.md`
+- `docs/logs/v0.0.64-repo-domain-rename/README.md`
+- `docs/logs/v0.0.65-brand-unify/README.md`
 
 ## 写日志的标准
 

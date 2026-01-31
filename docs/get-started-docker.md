@@ -1,29 +1,29 @@
 # Docker 快速开始
 
-适用场景：希望用 Docker 快速启动并体验 Clawdbot Manager。
+适用场景：希望用 Docker 快速启动并体验 OpenClaw Manager。
 
 ## 1) 一键启动
 
 ```bash
-curl -fsSL https://claw.cool/docker.sh | bash
+curl -fsSL https://openclaw-manager.com/docker.sh | bash
 ```
 
 带账号密码：
 
 ```bash
-MANAGER_ADMIN_USER=admin MANAGER_ADMIN_PASS=pass curl -fsSL https://claw.cool/docker.sh | bash
+MANAGER_ADMIN_USER=admin MANAGER_ADMIN_PASS=pass curl -fsSL https://openclaw-manager.com/docker.sh | bash
 ```
 
 手动指定公网地址（用于打印可访问链接）：
 
 ```bash
-MANAGER_PUBLIC_HOST=<your-public-ip-or-domain> curl -fsSL https://claw.cool/docker.sh | bash
+MANAGER_PUBLIC_HOST=<your-public-ip-or-domain> curl -fsSL https://openclaw-manager.com/docker.sh | bash
 ```
 
 延长网关启动超时（默认 60000ms）：
 
 ```bash
-MANAGER_GATEWAY_TIMEOUT_MS=60000 curl -fsSL https://claw.cool/docker.sh | bash
+MANAGER_GATEWAY_TIMEOUT_MS=60000 curl -fsSL https://openclaw-manager.com/docker.sh | bash
 ```
 
 脚本会自动拉起容器并输出访问地址与登录信息。

@@ -1,6 +1,18 @@
 {
-  "name": "@clawdbot-manager/cli",
-  "private": true,
+  "name": "openclaw-manager",
+  "version": "0.1.1",
   "type": "module",
-  "version": "0.1.0"
+  "bin": {
+    "openclaw-manager": "bin/openclaw-manager.js"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "web-dist",
+    "README.md"
+  ],
+  "dependencies": {
+    "@hono/node-server": "1.13.1",
+    "hono": "4.11.4"
+  }
 }

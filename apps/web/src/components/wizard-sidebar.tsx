@@ -35,7 +35,7 @@ export function WizardSidebar({ currentStep, isConnected, error }: WizardSidebar
         <aside className="relative hidden md:flex w-80 shrink-0 flex-col border-r border-line/40 bg-white/40 backdrop-blur-xl p-8">
             {/* Branding */}
             <div className="mb-10">
-                <h1 className="text-xl font-semibold tracking-tight">Clawdbot Manager</h1>
+                <h1 className="text-xl font-semibold tracking-tight">OpenClaw Manager</h1>
                 <p className="mt-1 text-sm text-muted">快速配置向导</p>
             </div>
 

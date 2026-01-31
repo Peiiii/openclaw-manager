@@ -35,4 +35,4 @@
 ## 发布/部署方式
 
 - `pnpm deploy:pages`
-- 线上冒烟：访问 `https://claw.cool`
+- 线上冒烟：访问 `https://openclaw-manager.com`

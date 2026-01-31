@@ -2,7 +2,7 @@
 
 ## 改了什么
 
-- 安装脚本默认使用 `https://github.com/Peiiii/moltbot-manager.git`
+- 安装脚本默认使用 `https://github.com/Peiiii/openclaw-manager.git`
 - `MANAGER_REPO_URL` 仍可覆盖默认仓库
 - README 的一键安装示例移除必填仓库参数
 
@@ -11,8 +11,8 @@
 - `pnpm -r --if-present lint`
 - `pnpm -r --if-present build`
 - 冒烟（线上脚本可访问性，非仓库目录）：
-  - `curl -fsSL https://claw.cool/install.sh | head -n 5`
-  - `curl -fsSL https://claw.cool/install.ps1 | head -n 5`
+  - `curl -fsSL https://openclaw-manager.com/install.sh | head -n 5`
+  - `curl -fsSL https://openclaw-manager.com/install.ps1 | head -n 5`
 
 ## 发布/部署方式
 

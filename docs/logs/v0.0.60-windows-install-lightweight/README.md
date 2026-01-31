@@ -18,9 +18,9 @@
 - `pnpm build`
 - `pnpm lint`
 - `pnpm -r --if-present tsc`
-- 冒烟：在 Windows 上执行 `irm https://claw.cool/install.ps1 | iex`，确认提示清晰且不再误覆盖目录。
+- 冒烟：在 Windows 上执行 `irm https://openclaw-manager.com/install.ps1 | iex`，确认提示清晰且不再误覆盖目录。
 
 ## 发布/部署方式
 
 - `pnpm deploy:pages`
-- 线上冒烟：访问 `https://claw.cool`
+- 线上冒烟：访问 `https://openclaw-manager.com`

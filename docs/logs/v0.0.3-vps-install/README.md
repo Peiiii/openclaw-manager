@@ -18,7 +18,7 @@
 ## 使用方式（VPS）
 
 ```bash
-curl -fsSL https://claw.cool/install.sh | MANAGER_REPO_URL=<git-repo-url> bash
+curl -fsSL https://openclaw-manager.com/install.sh | MANAGER_REPO_URL=<git-repo-url> bash
 ```
 
 可选环境变量：
@@ -31,7 +31,7 @@ curl -fsSL https://claw.cool/install.sh | MANAGER_REPO_URL=<git-repo-url> bash
 
 安装完成后访问：`http://<server-ip>:17321`
 
-安装脚本地址：`https://claw.cool/install.sh`
+安装脚本地址：`https://openclaw-manager.com/install.sh`
 
 ## 验证方式
 
@@ -45,12 +45,12 @@ curl -fsSL https://claw.cool/install.sh | MANAGER_REPO_URL=<git-repo-url> bash
 执行结果：全部通过。
 
 - Docker 验证（本地）：  
-  - `docker run --rm -v /tmp/clawdbot-manager-src:/src -e MANAGER_REPO_URL=/src -e MANAGER_ADMIN_USER=admin -e MANAGER_ADMIN_PASS=pass -e MANAGER_API_HOST=127.0.0.1 -e MANAGER_API_PORT=17321 node:22-bullseye bash -lc "apt-get update && apt-get install -y --no-install-recommends git curl ca-certificates && curl -fsSL https://claw.cool/install.sh | MANAGER_REPO_URL=/src MANAGER_ADMIN_USER=admin MANAGER_ADMIN_PASS=pass MANAGER_API_HOST=127.0.0.1 MANAGER_API_PORT=17321 bash && sleep 2 && curl -fsS http://127.0.0.1:17321/health && curl -fsS -u admin:pass http://127.0.0.1:17321/api/status"`  
+  - `docker run --rm -v /tmp/clawdbot-manager-src:/src -e MANAGER_REPO_URL=/src -e MANAGER_ADMIN_USER=admin -e MANAGER_ADMIN_PASS=pass -e MANAGER_API_HOST=127.0.0.1 -e MANAGER_API_PORT=17321 node:22-bullseye bash -lc "apt-get update && apt-get install -y --no-install-recommends git curl ca-certificates && curl -fsSL https://openclaw-manager.com/install.sh | MANAGER_REPO_URL=/src MANAGER_ADMIN_USER=admin MANAGER_ADMIN_PASS=pass MANAGER_API_HOST=127.0.0.1 MANAGER_API_PORT=17321 bash && sleep 2 && curl -fsS http://127.0.0.1:17321/health && curl -fsS -u admin:pass http://127.0.0.1:17321/api/status"`  
   - 观察点：`/health` 返回 ok，`/api/status` 在 Basic Auth 下返回 200  
 
 ## 发布/部署
 
 - Cloudflare Pages：
   - `pnpm deploy:pages`
-  - 线上冒烟验证：`curl https://claw.cool`
-  - 部署地址：`https://claw.cool`
+  - 线上冒烟验证：`curl https://openclaw-manager.com`
+  - 部署地址：`https://openclaw-manager.com`

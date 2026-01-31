@@ -1,9 +1,9 @@
-# 2026-01-27 Clawdbot Manager 初始化
+# 2026-01-27 OpenClaw Manager 初始化
 
 ## 目标
 
 - 独立仓库，面向“安装 + 配置 + 校验 + 运行”的全流程管理工具
-- 一条命令启动本地 UI，最小输入完成 Clawdbot 配置
+- 一条命令启动本地 UI，最小输入完成 OpenClaw 配置
 - 可一键部署到 Cloudflare Pages
 
 ## 本次交付
@@ -46,7 +46,7 @@
     - `CLOUDFLARE_PAGES_PROJECT`（默认 `clawdbot-manager`）
     - `CLOUDFLARE_PAGES_BRANCH`（默认 `main`）
   - 线上冒烟验证：`curl https://<project>.pages.dev`
-  - 部署地址：`https://claw.cool`
+  - 部署地址：`https://openclaw-manager.com`
 
 ## 相关文档
 

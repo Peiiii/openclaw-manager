@@ -34,5 +34,5 @@
 
 - Cloudflare Pages：
   - `pnpm deploy:pages`
-  - 线上冒烟验证：`curl https://claw.cool`
-  - 部署地址：`https://claw.cool`
+  - 线上冒烟验证：`curl https://openclaw-manager.com`
+  - 部署地址：`https://openclaw-manager.com`

@@ -5,7 +5,7 @@
 ## 一键脚本（推荐）
 
 ```bash
-curl -fsSL https://claw.cool/docker.sh | bash
+curl -fsSL https://openclaw-manager.com/docker.sh | bash
 ```
 
 如果你已经 clone 了仓库，可以直接运行本地脚本：
@@ -20,7 +20,7 @@ bash scripts/docker.sh
 MANAGER_ADMIN_USER=admin \
 MANAGER_ADMIN_PASS=pass \
 MANAGER_API_PORT=17321 \
-curl -fsSL https://claw.cool/docker.sh | bash
+curl -fsSL https://openclaw-manager.com/docker.sh | bash
 ```
 
 打开：
@@ -32,23 +32,23 @@ curl -fsSL https://claw.cool/docker.sh | bash
 
 查看日志：
 ```bash
-docker logs -f moltbot-manager
+docker logs -f openclaw-manager
 ```
 
 停止并删除容器：
 ```bash
-docker rm -f moltbot-manager
+docker rm -f openclaw-manager
 ```
 
 彻底清理（连配置一起删）：
 ```bash
-docker rm -f moltbot-manager
-docker volume rm moltbot-manager-config
+docker rm -f openclaw-manager
+docker volume rm openclaw-manager-config
 ```
 
 ## 可选参数
 
-- `MANAGER_REPO_URL`：自定义仓库地址（默认 `https://github.com/Peiiii/moltbot-manager.git`）
+- `MANAGER_REPO_URL`：自定义仓库地址（默认 `https://github.com/Peiiii/openclaw-manager.git`）
 - `MANAGER_API_PORT`：改端口（同时调整 `-p` 映射）
 
 ## 手动方式（保留）

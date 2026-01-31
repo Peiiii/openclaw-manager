@@ -8,7 +8,7 @@
 ## 使用方式
 
 - `pnpm manager:reset`
-- 保留 Clawdbot 数据：`pnpm manager:reset -- --keep-clawdbot`
+- 保留 OpenClaw 数据：`pnpm manager:reset -- --keep-clawdbot`
 
 ## 验证方式
 

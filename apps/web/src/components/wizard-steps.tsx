@@ -130,7 +130,7 @@ export function CliStep({
                 )}
             </div>
             <div>
-                <h2 className="text-2xl font-semibold">安装 Clawdbot CLI</h2>
+                <h2 className="text-2xl font-semibold">安装 OpenClaw CLI</h2>
                 <p className="mt-2 text-sm text-muted">{statusText}</p>
             </div>
             {installed ? (
@@ -151,7 +151,8 @@ export function CliStep({
             <div className="rounded-2xl bg-line/20 p-4 text-left text-xs text-muted">
                 <div className="mb-2 text-[11px] uppercase tracking-widest text-muted">手动安装</div>
                 <code className="break-words">npm i -g clawdbot@latest</code>
-                <div className="mt-2 text-[11px]">如提示权限不足，可改用 sudo 执行。</div>
+                <div className="mt-2 text-[11px]">当前 npm 包名仍为 clawdbot。</div>
+                <div className="mt-1 text-[11px]">如提示权限不足，可改用 sudo 执行。</div>
             </div>
             <JobLogPanel title="安装日志" logs={logs} status={jobStatus} />
             {jobStatus === "failed" ? (
@@ -636,7 +637,7 @@ export function CompleteStep({
             </div>
             <div>
                 <h2 className="text-2xl font-semibold text-success">🎉 设置完成!</h2>
-                <p className="mt-2 text-sm text-muted">Clawdbot 已成功配置并连接</p>
+                <p className="mt-2 text-sm text-muted">OpenClaw 已成功配置并连接</p>
             </div>
 
             <div className="space-y-3 rounded-2xl bg-line/20 p-4 text-left">
