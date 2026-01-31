@@ -1,42 +1,67 @@
 import { usePresenter } from "@/presenter/presenter-context";
+import { useAiStore } from "@/stores/ai-store";
+import { useCliStore } from "@/stores/cli-store";
+import { useGatewayStore } from "@/stores/gateway-store";
+import { usePairingStore } from "@/stores/pairing-store";
+import { useProbeStore } from "@/stores/probe-store";
 import { useStatusStore } from "@/stores/status-store";
+import { useTokenStore } from "@/stores/token-store";
+import { useJobsStore } from "@/stores/jobs-store";
 
 import type { OnboardingStep } from "../onboarding-steps";
-import type { OnboardingViewModel } from "../domain/view-model";
 import {
-  useOnboardingFlow,
   useAutoStartGateway,
   useEnterKeySubmit,
-  useStatusPolling
+  useStatusPolling,
+  useOnboardingFlow as useOnboardingFlowEffect
 } from "../use-onboarding-effects";
-import { useOnboardingViewModel } from "../use-onboarding-view-model";
+import { useOnboardingFlow } from "../use-onboarding-flow";
+import { useJobsRunning } from "../use-jobs-running";
 
 export function OnboardingOrchestrator() {
   const presenter = usePresenter();
   const status = useStatusStore((state) => state.status);
-  const { context, viewModel } = useOnboardingViewModel();
+  const { context, flow } = useOnboardingFlow();
+  const jobsRunning = useJobsRunning();
+  const quickstartStatus = useJobsStore((state) => state.quickstart.status);
+  const cliProcessing = useCliStore((state) => state.isProcessing);
+  const gatewayState = useGatewayStore((state) => state);
+  const tokenValue = useTokenStore((state) => state.value);
+  const tokenProcessing = useTokenStore((state) => state.isProcessing);
+  const aiValue = useAiStore((state) => state.value);
+  const aiProcessing = useAiStore((state) => state.isProcessing);
+  const pairingValue = usePairingStore((state) => state.value);
+  const pairingProcessing = usePairingStore((state) => state.isProcessing);
+  const probeProcessing = useProbeStore((state) => state.isProcessing);
 
-  useStatusPolling(presenter.status.refresh, viewModel.jobsRunning);
+  useStatusPolling(presenter.status.refresh, jobsRunning);
   useAutoStartGateway({
-    autoStarted: viewModel.gateway.autoStarted,
+    autoStarted: gatewayState.autoStarted,
     hasStatus: Boolean(status),
     cliInstalled: context.cliInstalled,
-    quickstartRunning: viewModel.gateway.jobStatus === "running",
+    quickstartRunning: quickstartStatus === "running",
     gatewayOk: context.gatewayOk,
     startGateway: presenter.gateway.autoStart
   });
-  useOnboardingFlow({
+  useOnboardingFlowEffect({
     hasStatus: Boolean(status),
     context,
     onStatusUpdate: presenter.onboarding.handleStatusUpdate
   });
   useEnterKeySubmit({
-    currentStep: viewModel.currentStep,
+    currentStep: flow.currentStep,
     cliInstalled: context.cliInstalled,
-    tokenInput: viewModel.token.value,
-    aiKeyInput: viewModel.ai.value,
-    pairingInput: viewModel.pairing.value,
-    isProcessing: resolveProcessing(viewModel, viewModel.currentStep),
+    tokenInput: tokenValue,
+    aiKeyInput: aiValue,
+    pairingInput: pairingValue,
+    isProcessing: resolveProcessing(flow.currentStep, {
+      cliProcessing,
+      gatewayProcessing: gatewayState.isProcessing,
+      tokenProcessing,
+      aiProcessing,
+      pairingProcessing,
+      probeProcessing
+    }),
     actions: {
       installCli: presenter.cli.install,
       submitToken: presenter.token.submit,
@@ -49,12 +74,22 @@ export function OnboardingOrchestrator() {
   return null;
 }
 
-function resolveProcessing(viewModel: OnboardingViewModel, step: OnboardingStep) {
-  if (step === "cli") return viewModel.cli.isProcessing;
-  if (step === "gateway") return viewModel.gateway.isProcessing;
-  if (step === "token") return viewModel.token.isProcessing;
-  if (step === "ai") return viewModel.ai.isProcessing;
-  if (step === "pairing") return viewModel.pairing.isProcessing;
-  if (step === "probe") return viewModel.probe.isProcessing;
+function resolveProcessing(
+  step: OnboardingStep,
+  params: {
+    cliProcessing: boolean;
+    gatewayProcessing: boolean;
+    tokenProcessing: boolean;
+    aiProcessing: boolean;
+    pairingProcessing: boolean;
+    probeProcessing: boolean;
+  }
+) {
+  if (step === "cli") return params.cliProcessing;
+  if (step === "gateway") return params.gatewayProcessing;
+  if (step === "token") return params.tokenProcessing;
+  if (step === "ai") return params.aiProcessing;
+  if (step === "pairing") return params.pairingProcessing;
+  if (step === "probe") return params.probeProcessing;
   return false;
 }

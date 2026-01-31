@@ -1,19 +1,25 @@
 import { CompleteStep } from "@/components/wizard-steps";
 import { usePresenter } from "@/presenter/presenter-context";
-import { useOnboardingViewModel } from "../use-onboarding-view-model";
+import { useJobsStore } from "@/stores/jobs-store";
+import { useResourceStore } from "@/stores/resource-store";
+import { useOnboardingFlow } from "../use-onboarding-flow";
 
 export function CompleteStepContainer() {
   const presenter = usePresenter();
-  const { viewModel } = useOnboardingViewModel();
+  const { context } = useOnboardingFlow();
+  const resourceMessage = useResourceStore((state) => state.message);
+  const resourceLogs = useJobsStore((state) => state.resource.logs);
+  const resourceJobStatus = useJobsStore((state) => state.resource.status);
+  const resourceError = useJobsStore((state) => state.resource.error);
 
   return (
     <CompleteStep
-      probeOk={viewModel.complete.probeOk}
+      probeOk={context.probeOk}
       onDownloadResource={presenter.resource.download}
-      resourceLogs={viewModel.complete.resourceLogs}
-      resourceJobStatus={viewModel.complete.resourceJobStatus}
-      resourceMessage={viewModel.complete.resourceMessage}
-      resourceError={viewModel.complete.resourceError}
+      resourceLogs={resourceLogs}
+      resourceJobStatus={resourceJobStatus}
+      resourceMessage={resourceMessage}
+      resourceError={resourceError}
     />
   );
 }

@@ -6,13 +6,13 @@ import { OnboardingOrchestrator } from "./containers/onboarding-orchestrator";
 import { OnboardingStepRenderer } from "./containers/onboarding-step-renderer";
 import { getOnboardingStepMeta } from "./onboarding-steps";
 import type { OnboardingBlockingReason } from "./domain/machine";
-import { useOnboardingViewModel } from "./use-onboarding-view-model";
+import { useOnboardingFlow } from "./use-onboarding-flow";
 
 export function OnboardingPage() {
   const status = useStatusStore((state) => state.status);
   const error = useStatusStore((state) => state.error);
-  const { viewModel } = useOnboardingViewModel();
-  const blockingMessage = buildBlockingMessage(viewModel.blockingReason);
+  const { flow } = useOnboardingFlow();
+  const blockingMessage = buildBlockingMessage(flow.blockingReason);
 
   return (
     <div className="min-h-screen bg-bg text-ink flex">
@@ -23,11 +23,11 @@ export function OnboardingPage() {
         <div className="absolute right-[-10%] bottom-[-10%] h-80 w-80 rounded-full bg-accent-2/20 blur-[140px]" />
       </div>
 
-      <WizardSidebar currentStep={viewModel.currentStep} isConnected={Boolean(status)} error={error} />
+      <WizardSidebar currentStep={flow.currentStep} isConnected={Boolean(status)} error={error} />
 
       <main className="relative flex-1 flex items-center justify-center p-6 md:p-12">
         <div className="w-full max-w-lg">
-          <MobileProgress currentStep={viewModel.currentStep} />
+          <MobileProgress currentStep={flow.currentStep} />
 
           {blockingMessage ? (
             <div className="mb-4 rounded-2xl border border-warning/40 bg-warning/10 px-4 py-3 text-xs text-warning">
@@ -36,7 +36,7 @@ export function OnboardingPage() {
           ) : null}
 
           <Card className="animate-fade-up overflow-hidden">
-            <OnboardingStepRenderer currentStep={viewModel.currentStep} />
+            <OnboardingStepRenderer currentStep={flow.currentStep} />
           </Card>
         </div>
       </main>

@@ -1,18 +1,20 @@
 import { TokenStep } from "@/components/wizard-steps";
 import { usePresenter } from "@/presenter/presenter-context";
-import { useOnboardingViewModel } from "../use-onboarding-view-model";
+import { useTokenStore } from "@/stores/token-store";
 
 export function TokenStepContainer() {
   const presenter = usePresenter();
-  const { viewModel } = useOnboardingViewModel();
+  const value = useTokenStore((state) => state.value);
+  const message = useTokenStore((state) => state.message);
+  const isProcessing = useTokenStore((state) => state.isProcessing);
 
   return (
     <TokenStep
-      value={viewModel.token.value}
+      value={value}
       onChange={presenter.token.setValue}
       onSubmit={presenter.token.submit}
-      isProcessing={viewModel.token.isProcessing}
-      message={viewModel.token.message}
+      isProcessing={isProcessing}
+      message={message}
     />
   );
 }

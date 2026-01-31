@@ -1,21 +1,31 @@
 import { CliStep } from "@/components/wizard-steps";
 import { usePresenter } from "@/presenter/presenter-context";
-import { useOnboardingViewModel } from "../use-onboarding-view-model";
+import { useCliStore } from "@/stores/cli-store";
+import { useJobsStore } from "@/stores/jobs-store";
+import { useStatusStore } from "@/stores/status-store";
 
 export function CliStepContainer() {
   const presenter = usePresenter();
-  const { viewModel } = useOnboardingViewModel();
+  const status = useStatusStore((state) => state.status);
+  const loading = useStatusStore((state) => state.loading);
+  const job = useJobsStore((state) => state.cli);
+  const message = useCliStore((state) => state.message);
+  const isProcessing = useCliStore((state) => state.isProcessing);
+
+  const installed = Boolean(status?.cli.installed);
+  const version = status?.cli.version ?? null;
+  const isChecking = !status && loading;
 
   return (
     <CliStep
-      installed={viewModel.cli.installed}
-      version={viewModel.cli.version}
-      isChecking={viewModel.cli.isChecking}
-      isProcessing={viewModel.cli.isProcessing}
-      message={viewModel.cli.message}
-      logs={viewModel.cli.logs}
-      jobStatus={viewModel.cli.jobStatus}
-      jobError={viewModel.cli.jobError}
+      installed={installed}
+      version={version}
+      isChecking={isChecking}
+      isProcessing={isProcessing}
+      message={message}
+      logs={job.logs}
+      jobStatus={job.status}
+      jobError={job.error}
       onInstall={presenter.cli.install}
     />
   );
