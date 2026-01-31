@@ -72,6 +72,10 @@ node apps/api/scripts/create-admin.mjs `
   --config (Join-Path $configDir "config.json")
 
 $logPath = if ($env:MANAGER_LOG_PATH) { $env:MANAGER_LOG_PATH } else { Join-Path $env:TEMP "clawdbot-manager.log" }
+$errorLogPath = if ($env:MANAGER_ERROR_LOG_PATH) { $env:MANAGER_ERROR_LOG_PATH } else { Join-Path $env:TEMP "clawdbot-manager.error.log" }
+if ($errorLogPath -eq $logPath) {
+  $errorLogPath = "$logPath.err"
+}
 $webDist = Join-Path $installDir "apps/web/dist"
 $configPath = Join-Path $configDir "config.json"
 $pidPath = Join-Path $configDir "manager.pid"
@@ -86,12 +90,13 @@ $proc = Start-Process -FilePath "node" `
   -WorkingDirectory $installDir `
   -WindowStyle Hidden `
   -RedirectStandardOutput $logPath `
-  -RedirectStandardError $logPath `
+  -RedirectStandardError $errorLogPath `
   -PassThru
 
 $proc.Id | Out-File -Encoding ascii $pidPath
 
 Write-Host "[manager] Started in background (log: $logPath)."
+Write-Host "[manager] Error log: $errorLogPath"
 Write-Host "[manager] PID saved to $pidPath."
 Write-Host "[manager] Open (local): http://localhost:$apiPort"
 Write-Host "[manager] Open (local): http://127.0.0.1:$apiPort"

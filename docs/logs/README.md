@@ -58,6 +58,7 @@
 - `docs/logs/v0.0.56-onboarding-hook-split/README.md`
 - `docs/logs/v0.0.57-mvp-presenter/README.md`
 - `docs/logs/v0.0.58-onboarding-orchestrator/README.md`
+- `docs/logs/v0.0.59-windows-install-log/README.md`
 
 ## 写日志的标准
 
