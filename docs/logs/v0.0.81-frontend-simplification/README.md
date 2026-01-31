@@ -24,4 +24,4 @@
 
 - `pnpm deploy:pages`
 - 按 `docs/workflows/npm-release-process.md` 执行 `pnpm release:publish`
-  - 已发布：`openclaw-manager@0.1.12`
+  - 已发布：`openclaw-manager@0.1.13`
