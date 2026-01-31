@@ -10,9 +10,9 @@ export function AiStepContainer() {
     <AiStep
       provider={viewModel.ai.provider}
       value={viewModel.ai.value}
-      onProviderChange={presenter.onboarding.setAiProvider}
-      onChange={presenter.onboarding.setAiKeyInput}
-      onSubmit={presenter.onboarding.handleAiSubmit}
+      onProviderChange={presenter.ai.setProvider}
+      onChange={presenter.ai.setValue}
+      onSubmit={presenter.ai.submit}
       isProcessing={viewModel.ai.isProcessing}
       message={viewModel.ai.message}
       configured={viewModel.ai.configured}

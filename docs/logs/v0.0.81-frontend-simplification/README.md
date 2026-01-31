@@ -7,6 +7,7 @@
 - 简化 Auth UI：移除“未配置管理员”分支提示
 - auth 拆分为独立 store + manager，遵守 MVP 边界（AuthGate 只订阅 store、动作走 manager）
 - 登录门禁默认启用：无 authHeader 一律展示登录页
+- 初始化能力层拆分：CLI/网关/Token/AI/配对/探测/资源各自独立 store + manager，onboarding 仅编排
 
 ## 使用方式
 

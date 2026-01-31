@@ -16,7 +16,7 @@ export function CliStepContainer() {
       logs={viewModel.cli.logs}
       jobStatus={viewModel.cli.jobStatus}
       jobError={viewModel.cli.jobError}
-      onInstall={presenter.onboarding.handleCliInstall}
+      onInstall={presenter.cli.install}
     />
   );
 }

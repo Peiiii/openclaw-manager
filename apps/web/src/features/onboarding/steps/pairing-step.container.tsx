@@ -9,8 +9,8 @@ export function PairingStepContainer() {
   return (
     <PairingStep
       value={viewModel.pairing.value}
-      onChange={presenter.onboarding.setPairingInput}
-      onSubmit={presenter.onboarding.handlePairingSubmit}
+      onChange={presenter.pairing.setValue}
+      onSubmit={presenter.pairing.submit}
       isProcessing={viewModel.pairing.isProcessing}
       message={viewModel.pairing.message}
       pendingPairings={viewModel.pairing.pendingPairings}

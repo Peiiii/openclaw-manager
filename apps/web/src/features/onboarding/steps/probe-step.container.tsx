@@ -13,7 +13,7 @@ export function ProbeStepContainer() {
       logs={viewModel.probe.logs}
       jobStatus={viewModel.probe.jobStatus}
       jobError={viewModel.probe.jobError}
-      onRetry={presenter.onboarding.handleProbe}
+      onRetry={presenter.probe.run}
     />
   );
 }

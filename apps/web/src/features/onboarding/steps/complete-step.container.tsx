@@ -9,7 +9,7 @@ export function CompleteStepContainer() {
   return (
     <CompleteStep
       probeOk={viewModel.complete.probeOk}
-      onDownloadResource={presenter.onboarding.handleResourceDownload}
+      onDownloadResource={presenter.resource.download}
       resourceLogs={viewModel.complete.resourceLogs}
       resourceJobStatus={viewModel.complete.resourceJobStatus}
       resourceMessage={viewModel.complete.resourceMessage}

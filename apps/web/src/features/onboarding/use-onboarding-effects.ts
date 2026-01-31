@@ -2,7 +2,6 @@ import { useEffect } from "react";
 
 import type { OnboardingStep } from "./onboarding-steps";
 
-import type { OnboardingActions } from "./onboarding-types";
 import type { OnboardingContext } from "./domain/context";
 
 export function useStatusPolling(refresh: () => Promise<void>, jobsRunning: boolean) {
@@ -20,13 +19,7 @@ type AutoStartParams = {
   cliInstalled: boolean;
   quickstartRunning: boolean;
   gatewayOk: boolean;
-  startQuickstartJob: (opts: { runProbe?: boolean; startGateway?: boolean }) => Promise<{
-    ok: boolean;
-    error?: string;
-    result?: { gatewayReady?: boolean; probeOk?: boolean } | null;
-  }>;
-  setMessage: (value: string | null) => void;
-  setAutoStarted: (value: boolean) => void;
+  startGateway: () => Promise<void>;
 };
 
 export function useAutoStartGateway(params: AutoStartParams) {
@@ -36,9 +29,7 @@ export function useAutoStartGateway(params: AutoStartParams) {
     cliInstalled,
     quickstartRunning,
     gatewayOk,
-    startQuickstartJob,
-    setMessage,
-    setAutoStarted
+    startGateway
   } = params;
 
   useEffect(() => {
@@ -51,31 +42,16 @@ export function useAutoStartGateway(params: AutoStartParams) {
       return;
     }
     if (gatewayOk) {
-      setAutoStarted(true);
       return;
     }
-    const run = async () => {
-      setMessage("正在自动启动网关...");
-      const result = await startQuickstartJob({ startGateway: true, runProbe: false });
-      if (!result.ok) {
-        setMessage(`启动失败: ${result.error}`);
-      } else if (result.result?.gatewayReady) {
-        setMessage("网关已就绪。");
-      } else {
-        setMessage("网关正在启动中...");
-      }
-      setAutoStarted(true);
-    };
-    void run();
+    void startGateway();
   }, [
     autoStarted,
     hasStatus,
     cliInstalled,
     quickstartRunning,
     gatewayOk,
-    setMessage,
-    setAutoStarted,
-    startQuickstartJob
+    startGateway
   ]);
 }
 
@@ -110,7 +86,13 @@ type EnterSubmitParams = {
   aiKeyInput: string;
   pairingInput: string;
   isProcessing: boolean;
-  actions: OnboardingActions;
+  actions: {
+    installCli: () => void;
+    submitToken: () => void;
+    submitAi: () => void;
+    submitPairing: () => void;
+    runProbe: () => void;
+  };
 };
 
 export function useEnterKeySubmit(params: EnterSubmitParams) {
@@ -128,15 +110,15 @@ export function useEnterKeySubmit(params: EnterSubmitParams) {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Enter" && !e.shiftKey && !isProcessing) {
         if (currentStep === "cli" && !cliInstalled) {
-          actions.handleCliInstall();
+          actions.installCli();
         } else if (currentStep === "token" && tokenInput.trim()) {
-          actions.handleTokenSubmit();
+          actions.submitToken();
         } else if (currentStep === "ai" && aiKeyInput.trim()) {
-          actions.handleAiSubmit();
+          actions.submitAi();
         } else if (currentStep === "pairing" && pairingInput.trim()) {
-          actions.handlePairingSubmit();
+          actions.submitPairing();
         } else if (currentStep === "probe") {
-          actions.handleProbe();
+          actions.runProbe();
         }
       }
     };

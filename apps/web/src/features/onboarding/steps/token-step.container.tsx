@@ -9,8 +9,8 @@ export function TokenStepContainer() {
   return (
     <TokenStep
       value={viewModel.token.value}
-      onChange={presenter.onboarding.setTokenInput}
-      onSubmit={presenter.onboarding.handleTokenSubmit}
+      onChange={presenter.token.setValue}
+      onSubmit={presenter.token.submit}
       isProcessing={viewModel.token.isProcessing}
       message={viewModel.token.message}
     />

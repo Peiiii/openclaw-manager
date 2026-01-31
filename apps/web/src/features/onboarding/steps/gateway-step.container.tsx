@@ -15,7 +15,7 @@ export function GatewayStepContainer() {
       logs={viewModel.gateway.logs}
       jobStatus={viewModel.gateway.jobStatus}
       jobError={viewModel.gateway.jobError}
-      onRetry={presenter.onboarding.handleRetry}
+      onRetry={presenter.gateway.retry}
     />
   );
 }

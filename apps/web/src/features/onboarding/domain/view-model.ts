@@ -1,5 +1,4 @@
 import type { JobState } from "@/stores/jobs-store";
-import type { OnboardingInputs, OnboardingMessages } from "@/stores/onboarding-store";
 
 import type { OnboardingContext } from "./context";
 import type { OnboardingBlockingReason } from "./machine";
@@ -88,10 +87,13 @@ export function buildOnboardingViewModel(params: {
     pendingStep: OnboardingStep | null;
     pendingSince: string | null;
     blockingReason: OnboardingBlockingReason | null;
-    inputs: OnboardingInputs;
-    messages: OnboardingMessages;
-    isProcessing: boolean;
-    autoStarted: boolean;
+    cli: { isProcessing: boolean; message: string | null };
+    gateway: { isProcessing: boolean; message: string | null; autoStarted: boolean };
+    token: { value: string; isProcessing: boolean; message: string | null };
+    ai: { provider: string; value: string; isProcessing: boolean; message: string | null };
+    pairing: { value: string; isProcessing: boolean; message: string | null };
+    probe: { isProcessing: boolean; message: string | null };
+    resource: { message: string | null };
   };
   context: OnboardingContext;
   jobs: JobBundle;
@@ -115,31 +117,31 @@ export function buildOnboardingViewModel(params: {
       installed: context.cliInstalled,
       version: context.cliVersion,
       isChecking: context.cliChecking,
-      isProcessing: state.isProcessing,
-      message: state.messages.cliMessage,
+      isProcessing: state.cli.isProcessing,
+      message: state.cli.message,
       logs: jobs.cli.logs,
       jobStatus: jobs.cli.status,
       jobError: jobs.cli.error
     },
     gateway: {
       isReady: context.gatewayOk,
-      autoStarted: state.autoStarted,
-      message: state.messages.message,
-      isProcessing: state.isProcessing,
+      autoStarted: state.gateway.autoStarted,
+      message: state.gateway.message,
+      isProcessing: state.gateway.isProcessing,
       logs: jobs.quickstart.logs,
       jobStatus: jobs.quickstart.status,
       jobError: jobs.quickstart.error
     },
     token: {
-      value: state.inputs.tokenInput,
-      isProcessing: state.isProcessing,
-      message: state.messages.message
+      value: state.token.value,
+      isProcessing: state.token.isProcessing,
+      message: state.token.message
     },
     ai: {
-      provider: state.inputs.aiProvider,
-      value: state.inputs.aiKeyInput,
-      isProcessing: state.isProcessing,
-      message: state.messages.aiMessage,
+      provider: state.ai.provider,
+      value: state.ai.value,
+      isProcessing: state.ai.isProcessing,
+      message: state.ai.message,
       configured: context.aiConfigured,
       missingProviders: context.aiMissingProviders,
       logs: jobs.aiAuth.logs,
@@ -148,17 +150,17 @@ export function buildOnboardingViewModel(params: {
       statusError: context.aiStatusError
     },
     pairing: {
-      value: state.inputs.pairingInput,
-      isProcessing: state.isProcessing,
-      message: state.messages.message,
+      value: state.pairing.value,
+      isProcessing: state.pairing.isProcessing,
+      message: state.pairing.message,
       pendingPairings: context.pendingPairings,
       logs: jobs.pairing.logs,
       jobStatus: jobs.pairing.status,
       jobError: jobs.pairing.error
     },
     probe: {
-      isProcessing: state.isProcessing,
-      message: state.messages.probeMessage,
+      isProcessing: state.probe.isProcessing,
+      message: state.probe.message,
       logs: jobs.quickstart.logs,
       jobStatus: jobs.quickstart.status,
       jobError: jobs.quickstart.error
@@ -167,7 +169,7 @@ export function buildOnboardingViewModel(params: {
       probeOk: context.probeOk,
       resourceLogs: jobs.resource.logs,
       resourceJobStatus: jobs.resource.status,
-      resourceMessage: state.messages.resourceMessage,
+      resourceMessage: state.resource.message,
       resourceError: jobs.resource.error
     }
   };
