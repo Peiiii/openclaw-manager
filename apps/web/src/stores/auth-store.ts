@@ -19,6 +19,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       const res = await fetch(`${apiBase}/api/auth/login`, {
         method: "POST",
         headers: { "content-type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ username, password })
       });
       const data = (await res.json()) as { ok: boolean; error?: string };

@@ -34,6 +34,7 @@
     "manager:gateway-start": "node scripts/manager-cli.mjs gateway-start",
     "manager:gateway-stop": "node scripts/manager-cli.mjs gateway-stop",
     "manager:server-stop": "node scripts/manager-cli.mjs server-stop",
+    "migrate:remote": "node scripts/remote-migrate.mjs",
     "build:openclaw-manager": "pnpm build && node scripts/build-openclaw-manager.mjs",
     "build": "pnpm -r --if-present build",
     "lint": "pnpm -r --if-present lint",

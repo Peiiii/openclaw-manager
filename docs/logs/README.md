@@ -81,6 +81,9 @@
 - `docs/logs/v0.0.79-discord-allowfrom-strict/README.md`
 - `docs/logs/v0.0.80-onboarding-flow-machine/README.md`
 - `docs/logs/v0.0.81-frontend-simplification/README.md`
+- `docs/logs/v0.0.82-auth-session-cookie/README.md`
+- `docs/logs/v0.0.83-dev-auth-required/README.md`
+- `docs/logs/v0.0.84-default-auth/README.md`
 
 ## 写日志的标准
 

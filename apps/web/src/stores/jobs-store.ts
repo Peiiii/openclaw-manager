@@ -139,6 +139,7 @@ async function runJob(
         "content-type": "application/json",
         ...(auth.authHeader ? { authorization: auth.authHeader } : {})
       },
+      credentials: "include",
       body: JSON.stringify(options.payload)
     });
     if (!res.ok) throw new Error(`Job create failed: ${res.status}`);

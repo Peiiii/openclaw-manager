@@ -11,7 +11,7 @@ export async function streamJobEvents(
 ) {
   const headers: Record<string, string> = { accept: "text/event-stream" };
   if (authHeader) headers.authorization = authHeader;
-  const res = await fetch(url, { headers });
+  const res = await fetch(url, { headers, credentials: "include" });
   if (!res.ok) {
     throw new Error(`Stream failed: ${res.status}`);
   }

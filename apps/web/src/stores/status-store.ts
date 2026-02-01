@@ -96,7 +96,8 @@ export const useStatusStore = create<StatusState>((set, get) => ({
         gatewayPort: gatewayPort || "18789"
       });
       const res = await fetch(`${apiBase}/api/status?${params.toString()}`, {
-        headers: auth.authHeader ? { authorization: auth.authHeader } : {}
+        headers: auth.authHeader ? { authorization: auth.authHeader } : {},
+        credentials: "include"
       });
       if (res.status === 401) {
         auth.clearAuth();
@@ -129,6 +130,7 @@ export const useStatusStore = create<StatusState>((set, get) => ({
         "content-type": "application/json",
         ...(auth.authHeader ? { authorization: auth.authHeader } : {})
       },
+      credentials: "include",
       body: JSON.stringify({ id })
     });
     await get().refresh();
@@ -142,6 +144,7 @@ export const useStatusStore = create<StatusState>((set, get) => ({
         "content-type": "application/json",
         ...(auth.authHeader ? { authorization: auth.authHeader } : {})
       },
+      credentials: "include",
       body: JSON.stringify({ id })
     });
     await get().refresh();
@@ -156,6 +159,7 @@ export const useStatusStore = create<StatusState>((set, get) => ({
           "content-type": "application/json",
           ...(auth.authHeader ? { authorization: auth.authHeader } : {})
         },
+        credentials: "include",
         body: JSON.stringify({ token })
       });
       const data = (await res.json()) as { ok: boolean; error?: string };

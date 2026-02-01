@@ -1,6 +1,7 @@
 import { scryptSync, timingSafeEqual } from "node:crypto";
 import fs from "node:fs";
 
+import { getDefaultAuthCredentials } from "./auth-defaults.js";
 import { resolveConfigPath } from "./config.js";
 
 export type AuthState = {
@@ -34,7 +35,12 @@ export function resolveAuthState(authDisabled: boolean): AuthState {
   const config = loadManagerConfig();
   const auth = config?.auth;
   if (!auth?.username || !auth?.salt || !auth?.hash) {
-    return { configured: false, verify: () => false };
+    const defaults = getDefaultAuthCredentials();
+    return {
+      configured: true,
+      verify: (username, password) =>
+        username === defaults.username && password === defaults.password
+    };
   }
 
   return {

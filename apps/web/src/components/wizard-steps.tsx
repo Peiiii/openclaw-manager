@@ -39,6 +39,7 @@ export function AuthStep({
                 <p className="mt-2 text-sm text-muted">
                     请输入安装时设置的管理员用户名与密码
                 </p>
+                <p className="mt-1 text-xs text-muted">默认账号：openclaw / openclaw</p>
             </div>
             <div className="space-y-4">
                 <Input

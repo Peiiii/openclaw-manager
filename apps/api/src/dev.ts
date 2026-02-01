@@ -19,14 +19,19 @@ const apiBaseUrl = `http://127.0.0.1:${apiPort}`;
 const viteCacheDir =
   process.env.VITE_CACHE_DIR ?? path.join(os.tmpdir(), "clawdbot-manager-vite");
 
+const apiEnv: NodeJS.ProcessEnv = {
+  ...process.env,
+  MANAGER_API_PORT: String(apiPort),
+  ONBOARDING_API_PORT: String(apiPort)
+};
+
+if (typeof process.env.MANAGER_AUTH_DISABLED === "string") {
+  apiEnv.MANAGER_AUTH_DISABLED = process.env.MANAGER_AUTH_DISABLED;
+}
+
 const apiProcess = spawnWithLabel("api", "pnpm", ["--filter", "clawdbot-manager-api", "dev"], {
   cwd: repoRoot,
-  env: {
-    ...process.env,
-    MANAGER_API_PORT: String(apiPort),
-    ONBOARDING_API_PORT: String(apiPort),
-    MANAGER_AUTH_DISABLED: process.env.MANAGER_AUTH_DISABLED ?? "1"
-  }
+  env: apiEnv
 });
 
 const webProcess = spawnWithLabel("web", "pnpm", ["--filter", "clawdbot-manager-web", "dev"], {

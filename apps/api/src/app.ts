@@ -27,11 +27,12 @@ export function createApp(deps: ApiDeps, options: AppOptions) {
     cors({
       origin: (origin) => {
         if (!origin) return "*";
-        if (allowed.has("*")) return "*";
+        if (allowed.has("*")) return origin;
         if (allowed.has(origin)) return origin;
         return "null";
       },
-      allowHeaders: ["Content-Type", "Authorization"]
+      allowHeaders: ["Content-Type", "Authorization"],
+      credentials: true
     })
   );
 
