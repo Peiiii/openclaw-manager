@@ -1,6 +1,9 @@
 import { Bot } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export function Footer() {
+  const { t } = useTranslation();
+
   return (
     <footer className="border-t border-line/50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -15,7 +18,7 @@ export function Footer() {
 
           {/* Copyright */}
           <p className="text-muted text-sm">
-            Open source under MIT License
+            {t("footer.copyright")}
           </p>
         </div>
       </div>

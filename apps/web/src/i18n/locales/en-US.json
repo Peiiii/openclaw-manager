@@ -1,0 +1,185 @@
+{
+  "app": {
+    "name": "OpenClaw Manager",
+    "subtitle": "Quick Setup Wizard"
+  },
+  "common": {
+    "continue": "Continue",
+    "login": "Login",
+    "install": "Install",
+    "start": "Start",
+    "retry": "Retry",
+    "save": "Save",
+    "verify": "Verify",
+    "download": "Download",
+    "processing": "Processing...",
+    "loading": "Loading...",
+    "success": "Success",
+    "failed": "Failed",
+    "error": "Error",
+    "cancel": "Cancel",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done",
+    "copy": "Copy",
+    "copied": "Copied",
+    "optional": "Optional"
+  },
+  "status": {
+    "connected": "Connected",
+    "connecting": "Connecting...",
+    "disconnected": "Disconnected",
+    "online": "Online",
+    "offline": "Offline",
+    "pending": "Pending",
+    "running": "Running",
+    "completed": "Completed"
+  },
+  "steps": {
+    "cli": {
+      "label": "Install CLI",
+      "description": "Prepare runtime environment"
+    },
+    "gateway": {
+      "label": "Verify Gateway",
+      "description": "Confirm local service is available"
+    },
+    "token": {
+      "label": "Configure Token",
+      "description": "Connect Discord Bot"
+    },
+    "ai": {
+      "label": "Configure AI",
+      "description": "Enable model capabilities"
+    },
+    "pairing": {
+      "label": "Pairing Verification",
+      "description": "Authorize user access"
+    },
+    "probe": {
+      "label": "Channel Probe",
+      "description": "Verify channel connection"
+    },
+    "complete": {
+      "label": "Start Using",
+      "description": "Everything is ready"
+    }
+  },
+  "auth": {
+    "title": "Admin Login",
+    "subtitle": "Please enter the admin username and password set during installation",
+    "defaultAccount": "Default account: openclaw / openclaw",
+    "username": "Admin Username",
+    "password": "Admin Password",
+    "usernamePlaceholder": "Enter username",
+    "passwordPlaceholder": "Enter password"
+  },
+  "cli": {
+    "title": "Install OpenClaw CLI",
+    "checking": "Detecting local CLI environment...",
+    "notDetected": "CLI not detected, please complete installation first.",
+    "ready": "CLI is ready, proceeding to next step...",
+    "detected": "CLI detected",
+    "installButton": "One-Click Install CLI",
+    "manualInstall": "Manual Install",
+    "npmCommand": "npm i -g clawdbot@latest",
+    "npmNote": "Current npm package name is still clawdbot.",
+    "permissionNote": "If permission denied, try using sudo.",
+    "installLogs": "Installation Logs",
+    "installFailed": "Installation failed"
+  },
+  "gateway": {
+    "title": "Verify Gateway",
+    "verified": "Gateway Verified",
+    "verifyFailed": "Gateway verification failed",
+    "verifying": "Verifying gateway...",
+    "waiting": "Waiting for gateway to start",
+    "autoEnter": "Automatically proceeding to next step...",
+    "retryStart": "Please check logs and retry startup.",
+    "checking": "Please wait, system is checking gateway status.",
+    "startHint": "Click the button below to start gateway, or start later as needed.",
+    "startButton": "Start Gateway",
+    "retryButton": "Retry Startup",
+    "startLogs": "Startup Logs",
+    "startFailed": "Startup failed"
+  },
+  "token": {
+    "title": "Configure Discord Bot Token",
+    "subtitle": "Paste your Discord Bot Token to establish connection",
+    "placeholder": "Paste Bot Token...",
+    "howToGet": "How to get Token?",
+    "enterHint": "Press Enter to continue"
+  },
+  "ai": {
+    "title": "Configure AI Capabilities",
+    "subtitle": "Configure API Key for default model, otherwise replies cannot be generated",
+    "provider": "Model Provider",
+    "apiKey": "API Key",
+    "apiKeyPlaceholder": "Paste API Key",
+    "saveButton": "Save and Continue",
+    "missingProviders": "Missing model provider credentials",
+    "detected": "Model credentials detected.",
+    "getKey": "Get API Key",
+    "configLogs": "AI Configuration Logs",
+    "configFailed": "Configuration failed",
+    "statusFailed": "Status detection failed",
+    "providers": {
+      "anthropic": "Anthropic (Claude)",
+      "openai": "OpenAI",
+      "openrouter": "OpenRouter",
+      "minimax": "MiniMax",
+      "minimax-cn": "MiniMax China",
+      "gemini": "Gemini (Google)",
+      "zai": "Z.AI",
+      "moonshot": "Moonshot"
+    }
+  },
+  "pairing": {
+    "title": "Pair with Discord",
+    "subtitle": "DM your Bot in Discord to get pairing code",
+    "step1": "Open Discord and find your Bot",
+    "step2": "Send any message to get pairing code",
+    "step3": "Enter the pairing code below",
+    "placeholder": "Enter pairing code, e.g. ABC123",
+    "pendingRequests": "Detected {count} pending pairing request(s)!",
+    "verifyButton": "Verify Pairing",
+    "pairingLogs": "Pairing Logs",
+    "pairingFailed": "Pairing failed"
+  },
+  "probe": {
+    "title": "Channel Probe",
+    "description": "We will automatically verify channel connection, click retry if it fails.",
+    "retryButton": "Retry Probe",
+    "probeLogs": "Probe Logs",
+    "probeFailed": "Probe failed"
+  },
+  "complete": {
+    "title": "Setup Complete!",
+    "subtitle": "OpenClaw has been successfully configured and connected",
+    "gatewayStatus": "Gateway Status",
+    "botConnection": "Bot Connection",
+    "probeStatus": "Channel Probe",
+    "online": "Online",
+    "connected": "Connected",
+    "passed": "Passed",
+    "pendingVerify": "Pending Verification",
+    "startChat": "Start Chatting",
+    "chatHint": "You can now chat with the Bot in Discord",
+    "resourceTitle": "Optional: Download Resource Pack",
+    "resourceDesc": "If you have additional resources (models/assets/config), you can download them here.",
+    "downloadButton": "Download Resources",
+    "resourceLogs": "Resource Download Logs",
+    "downloadFailed": "Download failed"
+  },
+  "blocking": {
+    "pendingConfirmation": "Please complete the current step confirmation before continuing"
+  },
+  "errors": {
+    "unknown": "Unknown error",
+    "connectionFailed": "Connection failed",
+    "invalidToken": "Invalid Token",
+    "pairingFailed": "Pairing failed",
+    "probeFailed": "Probe failed"
+  }
+}

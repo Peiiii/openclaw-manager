@@ -1,0 +1,117 @@
+{
+  "nav": {
+    "features": "Features",
+    "howItWorks": "How It Works"
+  },
+  "hero": {
+    "title1": "Graphical Installation",
+    "title2": "OpenClaw",
+    "title3": "Made Easy",
+    "description": "OpenClaw Manager lets you deploy OpenClaw (formerly Clawdbot) AI assistant with one click. Supports Discord, WhatsApp, Telegram and more platforms. Your data stays under your control.",
+    "installTitle": "Recommended Installation",
+    "copy": "Copy",
+    "copied": "Copied",
+    "github": "GitHub"
+  },
+  "features": {
+    "title": "Why Choose",
+    "subtitle": "A truly capable AI assistant at your fingertips",
+    "items": {
+      "localFirst": {
+        "title": "Local First",
+        "description": "Run on your own device with complete data control. No privacy concerns."
+      },
+      "multiChannel": {
+        "title": "Multi-Channel Support",
+        "description": "Supports Discord, WhatsApp, Telegram, Slack and other major messaging platforms."
+      },
+      "aiAssistant": {
+        "title": "AI Assistant",
+        "description": "24/7 AI assistant supporting multiple LLMs for intelligent conversations."
+      },
+      "secure": {
+        "title": "Secure & Reliable",
+        "description": "End-to-end encrypted communication with auditable open source code."
+      },
+      "oneClickDeploy": {
+        "title": "One-Click Deploy",
+        "description": "Simple installation scripts for deployment in minutes without complex server setup."
+      },
+      "modelCompatible": {
+        "title": "Model Compatible",
+        "description": "Supports OpenAI, Claude, and various other AI providers."
+      },
+      "realtime": {
+        "title": "Real-time Response",
+        "description": "Optimized inference engine with millisecond response times for smooth interactions."
+      },
+      "openSource": {
+        "title": "Open Source & Free",
+        "description": "Fully open source with 100k+ GitHub stars, community-driven continuous iteration."
+      }
+    }
+  },
+  "howItWorks": {
+    "title": "Four Steps",
+    "titleSuffix": "to Deploy Your AI Assistant",
+    "subtitle": "Simple installation process, complete deployment in minutes",
+    "steps": {
+      "install": {
+        "title": "Install Manager",
+        "description": "Run npm command to globally install OpenClaw Manager with automatic environment setup."
+      },
+      "configure": {
+        "title": "Configure Connection",
+        "description": "Configure Discord Bot Token and AI model API Key in the Web interface."
+      },
+      "pairing": {
+        "title": "Pair & Verify",
+        "description": "Pair and verify with the Bot through Discord to authorize your account access."
+      },
+      "start": {
+        "title": "Start Using",
+        "description": "After channel probing, your AI assistant is ready to start conversations anytime."
+      }
+    }
+  },
+  "pricing": {
+    "title": "Open Source & ",
+    "titleHighlight": "Free",
+    "titleSuffix": ", Self-Hosted",
+    "subtitle": "OpenClaw is completely open source and free. You can self-host it or choose future managed services.",
+    "comingSoon": "Coming Soon",
+    "plans": {
+      "opensource": {
+        "name": "Open Source",
+        "description": "Completely free, self-hosted",
+        "price": "Free",
+        "features": [
+          "Local deployment",
+          "Full data ownership",
+          "Discord / WhatsApp / Telegram",
+          "Multiple AI model support",
+          "Auditable open source code",
+          "Community support"
+        ],
+        "cta": "Download on GitHub"
+      },
+      "hosted": {
+        "name": "Managed",
+        "description": "Coming soon, stay tuned",
+        "price": "Coming Soon",
+        "features": [
+          "One-click cloud deployment",
+          "Automatic updates & maintenance",
+          "Multi-platform integration",
+          "Advanced analytics dashboard",
+          "Priority technical support",
+          "SLA guarantee"
+        ],
+        "cta": "Join Waitlist"
+      }
+    }
+  },
+  "footer": {
+    "copyright": "Open source under MIT License"
+  }
+}

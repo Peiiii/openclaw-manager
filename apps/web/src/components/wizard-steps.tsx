@@ -1,4 +1,5 @@
 import { ArrowRight, Check, ExternalLink, Loader2, Lock, MessageCircle, Search, Shield, Terminal } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { JobLogPanel } from "@/components/job-log-panel";
 import { Button } from "@/components/ui/button";
@@ -29,30 +30,32 @@ export function AuthStep({
     isProcessing,
     message
 }: AuthStepProps) {
+    const { t } = useTranslation();
+    
     return (
         <div className="space-y-6 p-8">
             <div className="text-center">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-accent/10">
                     <Lock className="h-8 w-8 text-accent" />
                 </div>
-                <h2 className="mt-4 text-2xl font-semibold">管理员登录</h2>
+                <h2 className="mt-4 text-2xl font-semibold">{t("auth.title")}</h2>
                 <p className="mt-2 text-sm text-muted">
-                    请输入安装时设置的管理员用户名与密码
+                    {t("auth.subtitle")}
                 </p>
-                <p className="mt-1 text-xs text-muted">默认账号：openclaw / openclaw</p>
+                <p className="mt-1 text-xs text-muted">{t("auth.defaultAccount")}</p>
             </div>
             <div className="space-y-4">
                 <Input
                     value={username}
                     onChange={(e) => onUsernameChange(e.target.value)}
-                    placeholder="管理员用户名"
+                    placeholder={t("auth.username")}
                     autoFocus
                 />
                 <Input
                     type="password"
                     value={password}
                     onChange={(e) => onPasswordChange(e.target.value)}
-                    placeholder="管理员密码"
+                    placeholder={t("auth.password")}
                 />
                 <Button
                     onClick={onSubmit}
@@ -64,7 +67,7 @@ export function AuthStep({
                         <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
                         <>
-                            登录
+                            {t("common.login")}
                             <ArrowRight className="h-4 w-4" />
                         </>
                     )}
@@ -106,11 +109,13 @@ export function CliStep({
     jobError,
     onInstall
 }: CliStepProps) {
+    const { t } = useTranslation();
+    
     const statusText = installed
-        ? "CLI 已就绪，正在进入下一步..."
+        ? t("cli.ready")
         : isChecking
-            ? "正在检测本机 CLI 环境..."
-            : "未检测到 CLI，请先完成安装。";
+            ? t("cli.checking")
+            : t("cli.notDetected");
 
     return (
         <div className="space-y-6 p-8 text-center">
@@ -124,12 +129,12 @@ export function CliStep({
                 )}
             </div>
             <div>
-                <h2 className="text-2xl font-semibold">安装 OpenClaw CLI</h2>
+                <h2 className="text-2xl font-semibold">{t("cli.title")}</h2>
                 <p className="mt-2 text-sm text-muted">{statusText}</p>
             </div>
             {installed ? (
                 <div className="rounded-2xl bg-success/10 px-4 py-2 text-sm text-success text-center">
-                    已检测到 CLI{version ? `（${version}）` : ""}。
+                    {t("cli.detected")}{version ? `（${version}）` : ""}。
                 </div>
             ) : (
                 <Button
@@ -139,19 +144,19 @@ export function CliStep({
                     className="w-full"
                 >
                     {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-                    一键安装 CLI
+                    {t("cli.installButton")}
                 </Button>
             )}
             <div className="rounded-2xl bg-line/20 p-4 text-left text-xs text-muted">
-                <div className="mb-2 text-[11px] uppercase tracking-widest text-muted">手动安装</div>
-                <code className="break-words">npm i -g clawdbot@latest</code>
-                <div className="mt-2 text-[11px]">当前 npm 包名仍为 clawdbot。</div>
-                <div className="mt-1 text-[11px]">如提示权限不足，可改用 sudo 执行。</div>
+                <div className="mb-2 text-[11px] uppercase tracking-widest text-muted">{t("cli.manualInstall")}</div>
+                <code className="break-words">{t("cli.npmCommand")}</code>
+                <div className="mt-2 text-[11px]">{t("cli.npmNote")}</div>
+                <div className="mt-1 text-[11px]">{t("cli.permissionNote")}</div>
             </div>
-            <JobLogPanel title="安装日志" logs={logs} status={jobStatus} />
+            <JobLogPanel title={t("cli.installLogs")} logs={logs} status={jobStatus} />
             {jobStatus === "failed" ? (
                 <div className="rounded-2xl bg-warning/10 px-4 py-2 text-xs text-warning text-center">
-                    安装失败：{jobError ?? "未知错误"}
+                    {t("cli.installFailed")}：{jobError ?? t("errors.unknown")}
                 </div>
             ) : null}
             {message && (
@@ -188,21 +193,23 @@ export function GatewayStep({
     jobError,
     onStart
 }: GatewayStepProps) {
+    const { t } = useTranslation();
+    
     const isStarting = isProcessing || jobStatus === "running";
     const title = isReady
-        ? "网关已验证"
+        ? t("gateway.verified")
         : jobStatus === "failed"
-            ? "网关验证失败"
+            ? t("gateway.verifyFailed")
             : isStarting
-                ? "正在验证网关..."
-                : "等待网关启动";
+                ? t("gateway.verifying")
+                : t("gateway.waiting");
     const subtitle = isReady
-        ? "正在自动进入下一步..."
+        ? t("gateway.autoEnter")
         : jobStatus === "failed"
-            ? "请查看日志并重试启动。"
+            ? t("gateway.retryStart")
             : isStarting
-                ? "请稍候，系统正在检查网关状态。"
-                : "点击下方按钮启动网关，或稍后在后续步骤按需启动。";
+                ? t("gateway.checking")
+                : t("gateway.startHint");
 
     return (
         <div className="space-y-6 p-8 text-center">
@@ -220,13 +227,13 @@ export function GatewayStep({
             {!isReady && (
                 <Button onClick={onStart} disabled={isProcessing} variant="outline">
                     {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-                    {autoStarted ? "重试启动" : "启动网关"}
+                    {autoStarted ? t("gateway.retryButton") : t("gateway.startButton")}
                 </Button>
             )}
-            <JobLogPanel title="启动日志" logs={logs} status={jobStatus} />
+            <JobLogPanel title={t("gateway.startLogs")} logs={logs} status={jobStatus} />
             {jobStatus === "failed" ? (
                 <div className="rounded-2xl bg-warning/10 px-4 py-2 text-xs text-warning">
-                    启动失败：{jobError ?? "未知错误"}
+                    {t("gateway.startFailed")}：{jobError ?? t("errors.unknown")}
                 </div>
             ) : null}
             {message && (
@@ -249,21 +256,23 @@ interface TokenStepProps {
 }
 
 export function TokenStep({ value, onChange, onSubmit, isProcessing, message }: TokenStepProps) {
+    const { t } = useTranslation();
+    
     return (
         <div className="space-y-6 p-8">
             <div className="text-center">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-accent/10">
                     <Shield className="h-8 w-8 text-accent" />
                 </div>
-                <h2 className="mt-4 text-2xl font-semibold">配置 Discord Bot Token</h2>
-                <p className="mt-2 text-sm text-muted">粘贴您的 Discord Bot Token 以建立连接</p>
+                <h2 className="mt-4 text-2xl font-semibold">{t("token.title")}</h2>
+                <p className="mt-2 text-sm text-muted">{t("token.subtitle")}</p>
             </div>
             <div className="space-y-4">
                 <Input
                     type="password"
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
-                    placeholder="粘贴 Bot Token..."
+                    placeholder={t("token.placeholder")}
                     className="text-center"
                     autoFocus
                 />
@@ -277,7 +286,7 @@ export function TokenStep({ value, onChange, onSubmit, isProcessing, message }: 
                         <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
                         <>
-                            继续
+                            {t("common.continue")}
                             <ArrowRight className="h-4 w-4" />
                         </>
                     )}
@@ -290,10 +299,10 @@ export function TokenStep({ value, onChange, onSubmit, isProcessing, message }: 
                     rel="noreferrer"
                     className="inline-flex items-center gap-1 hover:text-accent transition"
                 >
-                    如何获取 Token?
+                    {t("token.howToGet")}
                     <ExternalLink className="h-3 w-3" />
                 </a>
-                <span className="hidden sm:inline">按 Enter 继续</span>
+                <span className="hidden sm:inline">{t("token.enterHint")}</span>
             </div>
             {message && (
                 <div className="rounded-2xl bg-line/30 px-4 py-2 text-xs text-muted text-center">
@@ -325,14 +334,14 @@ interface AiStepProps {
 }
 
 const AI_PROVIDER_OPTIONS = [
-    { value: "anthropic", label: "Anthropic (Claude)" },
-    { value: "openai", label: "OpenAI" },
-    { value: "openrouter", label: "OpenRouter" },
-    { value: "minimax", label: "MiniMax" },
-    { value: "minimax-cn", label: "MiniMax 国内" },
-    { value: "gemini", label: "Gemini (Google)" },
-    { value: "zai", label: "Z.AI" },
-    { value: "moonshot", label: "Moonshot" }
+    { value: "anthropic", labelKey: "ai.providers.anthropic" },
+    { value: "openai", labelKey: "ai.providers.openai" },
+    { value: "openrouter", labelKey: "ai.providers.openrouter" },
+    { value: "minimax", labelKey: "ai.providers.minimax" },
+    { value: "minimax-cn", labelKey: "ai.providers.minimax-cn" },
+    { value: "gemini", labelKey: "ai.providers.gemini" },
+    { value: "zai", labelKey: "ai.providers.zai" },
+    { value: "moonshot", labelKey: "ai.providers.moonshot" }
 ];
 
 const AI_PROVIDER_HELP: Record<string, string> = {
@@ -356,34 +365,36 @@ export function AiStep({
     jobError,
     statusError
 }: AiStepProps) {
+    const { t } = useTranslation();
     const helpLink = AI_PROVIDER_HELP[provider];
+    
     return (
         <div className="space-y-6 p-8">
             <div className="text-center">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-accent/10">
                     <Shield className="h-8 w-8 text-accent" />
                 </div>
-                <h2 className="mt-4 text-2xl font-semibold">配置 AI 能力</h2>
+                <h2 className="mt-4 text-2xl font-semibold">{t("ai.title")}</h2>
                 <p className="mt-2 text-sm text-muted">
-                    为默认模型配置 API Key，否则无法生成回复
+                    {t("ai.subtitle")}
                 </p>
             </div>
 
             {missingProviders.length > 0 ? (
                 <div className="rounded-2xl bg-warning/10 px-4 py-2 text-xs text-warning text-center">
-                    缺少模型提供方凭证：{missingProviders.join(", ")}
+                    {t("ai.missingProviders")}：{missingProviders.join(", ")}
                 </div>
             ) : null}
 
             {configured ? (
                 <div className="rounded-2xl bg-success/10 px-4 py-2 text-sm text-success text-center">
-                    已检测到模型凭证。
+                    {t("ai.detected")}
                 </div>
             ) : null}
 
             <div className="space-y-4">
                 <div className="space-y-2">
-                    <label className="text-xs text-muted">模型提供方</label>
+                    <label className="text-xs text-muted">{t("ai.provider")}</label>
                     <select
                         value={provider}
                         onChange={(e) => onProviderChange(e.target.value)}
@@ -391,7 +402,7 @@ export function AiStep({
                     >
                         {AI_PROVIDER_OPTIONS.map((opt) => (
                             <option key={opt.value} value={opt.value}>
-                                {opt.label}
+                                {t(opt.labelKey)}
                             </option>
                         ))}
                     </select>
@@ -400,7 +411,7 @@ export function AiStep({
                     type="password"
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
-                    placeholder="粘贴 API Key"
+                    placeholder={t("ai.apiKeyPlaceholder")}
                     className="text-center"
                 />
                 <Button
@@ -413,7 +424,7 @@ export function AiStep({
                         <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
                         <>
-                            保存并继续
+                            {t("ai.saveButton")}
                             <ArrowRight className="h-4 w-4" />
                         </>
                     )}
@@ -422,7 +433,7 @@ export function AiStep({
 
             {helpLink ? (
                 <div className="text-center text-xs text-muted">
-                    获取密钥：
+                    {t("ai.getKey")}：
                     <a
                         href={helpLink}
                         target="_blank"
@@ -434,15 +445,15 @@ export function AiStep({
                 </div>
             ) : null}
 
-            <JobLogPanel title="AI 配置日志" logs={logs} status={jobStatus} />
+            <JobLogPanel title={t("ai.configLogs")} logs={logs} status={jobStatus} />
             {jobStatus === "failed" ? (
                 <div className="rounded-2xl bg-warning/10 px-4 py-2 text-xs text-warning text-center">
-                    配置失败：{jobError ?? "未知错误"}
+                    {t("ai.configFailed")}：{jobError ?? t("errors.unknown")}
                 </div>
             ) : null}
             {statusError ? (
                 <div className="rounded-2xl bg-warning/10 px-4 py-2 text-xs text-warning text-center">
-                    状态检测失败：{statusError}
+                    {t("ai.statusFailed")}：{statusError}
                 </div>
             ) : null}
             {message && (
@@ -481,14 +492,16 @@ export function PairingStep({
     jobStatus,
     jobError
 }: PairingStepProps) {
+    const { t } = useTranslation();
+    
     return (
         <div className="space-y-6 p-8">
             <div className="text-center">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-accent/10">
                     <MessageCircle className="h-8 w-8 text-accent" />
                 </div>
-                <h2 className="mt-4 text-2xl font-semibold">配对 Discord</h2>
-                <p className="mt-2 text-sm text-muted">在 Discord 中私信您的 Bot，获取配对码</p>
+                <h2 className="mt-4 text-2xl font-semibold">{t("pairing.title")}</h2>
+                <p className="mt-2 text-sm text-muted">{t("pairing.subtitle")}</p>
             </div>
 
             {/* Instructions */}
@@ -497,25 +510,25 @@ export function PairingStep({
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-semibold text-white">
                         1
                     </span>
-                    <span className="text-muted">打开 Discord，找到您的 Bot</span>
+                    <span className="text-muted">{t("pairing.step1")}</span>
                 </div>
                 <div className="flex items-start gap-3 text-sm">
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-semibold text-white">
                         2
                     </span>
-                    <span className="text-muted">发送任意消息获取配对码</span>
+                    <span className="text-muted">{t("pairing.step2")}</span>
                 </div>
                 <div className="flex items-start gap-3 text-sm">
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-semibold text-white">
                         3
                     </span>
-                    <span className="text-muted">在下方输入配对码</span>
+                    <span className="text-muted">{t("pairing.step3")}</span>
                 </div>
             </div>
 
             {pendingPairings > 0 && (
                 <div className="rounded-2xl bg-success/10 px-4 py-2 text-sm text-success text-center">
-                    🎉 检测到 {pendingPairings} 个待配对请求！
+                    🎉 {t("pairing.pendingRequests", { count: pendingPairings })}
                 </div>
             )}
 
@@ -523,7 +536,7 @@ export function PairingStep({
                 <Input
                     value={value}
                     onChange={(e) => onChange(e.target.value.toUpperCase())}
-                    placeholder="输入配对码，如 ABC123"
+                    placeholder={t("pairing.placeholder")}
                     className="text-center font-mono text-lg tracking-widest"
                     maxLength={10}
                     autoFocus
@@ -538,17 +551,17 @@ export function PairingStep({
                         <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
                         <>
-                            验证配对
+                            {t("pairing.verifyButton")}
                             <ArrowRight className="h-4 w-4" />
                         </>
                     )}
                 </Button>
             </div>
-            <div className="text-center text-xs text-muted">按 Enter 继续</div>
-            <JobLogPanel title="配对日志" logs={logs} status={jobStatus} />
+            <div className="text-center text-xs text-muted">{t("token.enterHint")}</div>
+            <JobLogPanel title={t("pairing.pairingLogs")} logs={logs} status={jobStatus} />
             {jobStatus === "failed" ? (
                 <div className="rounded-2xl bg-warning/10 px-4 py-2 text-xs text-warning text-center">
-                    配对失败：{jobError ?? "未知错误"}
+                    {t("pairing.pairingFailed")}：{jobError ?? t("errors.unknown")}
                 </div>
             ) : null}
             {message && (
@@ -574,6 +587,8 @@ interface ProbeStepProps {
 }
 
 export function ProbeStep({ isProcessing, message, logs, jobStatus, jobError, onRetry }: ProbeStepProps) {
+    const { t } = useTranslation();
+    
     return (
         <div className="space-y-6 p-8 text-center">
             <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-accent/10">
@@ -584,19 +599,19 @@ export function ProbeStep({ isProcessing, message, logs, jobStatus, jobError, on
                 )}
             </div>
             <div>
-                <h2 className="text-2xl font-semibold">通道探测</h2>
+                <h2 className="text-2xl font-semibold">{t("probe.title")}</h2>
                 <p className="mt-2 text-sm text-muted">
-                    我们会自动验证通道连接，失败时可点击重试。
+                    {t("probe.description")}
                 </p>
             </div>
             <Button onClick={onRetry} disabled={isProcessing} size="lg" className="w-full">
                 {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-                重新探测
+                {t("probe.retryButton")}
             </Button>
-            <JobLogPanel title="探测日志" logs={logs} status={jobStatus} />
+            <JobLogPanel title={t("probe.probeLogs")} logs={logs} status={jobStatus} />
             {jobStatus === "failed" ? (
                 <div className="rounded-2xl bg-warning/10 px-4 py-2 text-xs text-warning text-center">
-                    探测失败：{jobError ?? "未知错误"}
+                    {t("probe.probeFailed")}：{jobError ?? t("errors.unknown")}
                 </div>
             ) : null}
             {message && (
@@ -629,45 +644,47 @@ export function CompleteStep({
     resourceMessage,
     resourceError
 }: CompleteStepProps) {
+    const { t } = useTranslation();
+    
     return (
         <div className="space-y-6 p-8 text-center">
             <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-success/10">
                 <Check className="h-10 w-10 text-success" />
             </div>
             <div>
-                <h2 className="text-2xl font-semibold text-success">🎉 设置完成!</h2>
-                <p className="mt-2 text-sm text-muted">OpenClaw 已成功配置并连接</p>
+                <h2 className="text-2xl font-semibold text-success">🎉 {t("complete.title")}</h2>
+                <p className="mt-2 text-sm text-muted">{t("complete.subtitle")}</p>
             </div>
 
             <div className="space-y-3 rounded-2xl bg-line/20 p-4 text-left">
                 <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted">网关状态</span>
-                    <span className="font-semibold text-success">● 在线</span>
+                    <span className="text-muted">{t("complete.gatewayStatus")}</span>
+                    <span className="font-semibold text-success">● {t("complete.online")}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted">Bot 连接</span>
-                    <span className="font-semibold text-success">● 已连接</span>
+                    <span className="text-muted">{t("complete.botConnection")}</span>
+                    <span className="font-semibold text-success">● {t("complete.connected")}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted">通道探测</span>
+                    <span className="text-muted">{t("complete.probeStatus")}</span>
                     <span className={cn("font-semibold", probeOk ? "text-success" : "text-warning")}>
-                        {probeOk ? "● 通过" : "○ 待验证"}
+                        {probeOk ? `● ${t("complete.passed")}` : `○ ${t("complete.pendingVerify")}`}
                     </span>
                 </div>
             </div>
 
             <div className="space-y-3">
                 <Button size="lg" className="w-full">
-                    开始对话
+                    {t("complete.startChat")}
                     <ArrowRight className="h-4 w-4" />
                 </Button>
-                <p className="text-xs text-muted">现在可以在 Discord 中与 Bot 对话了</p>
+                <p className="text-xs text-muted">{t("complete.chatHint")}</p>
             </div>
 
             <div className="space-y-3 rounded-2xl bg-line/20 p-4 text-left">
-                <div className="text-sm font-semibold text-ink">可选：下载资源包</div>
+                <div className="text-sm font-semibold text-ink">{t("complete.resourceTitle")}</div>
                 <p className="text-xs text-muted">
-                    若你有额外资源（模型/素材/配置），可在此一键下载到本机。
+                    {t("complete.resourceDesc")}
                 </p>
                 <Button
                     size="sm"
@@ -678,12 +695,12 @@ export function CompleteStep({
                     {resourceJobStatus === "running" ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                     ) : null}
-                    下载资源
+                    {t("complete.downloadButton")}
                 </Button>
-                <JobLogPanel title="资源下载日志" logs={resourceLogs} status={resourceJobStatus} />
+                <JobLogPanel title={t("complete.resourceLogs")} logs={resourceLogs} status={resourceJobStatus} />
                 {resourceJobStatus === "failed" ? (
                     <div className="rounded-2xl bg-warning/10 px-4 py-2 text-xs text-warning">
-                        下载失败：{resourceError ?? "未知错误"}
+                        {t("complete.downloadFailed")}：{resourceError ?? t("errors.unknown")}
                     </div>
                 ) : null}
                 {resourceMessage && (

@@ -1,0 +1,185 @@
+{
+  "app": {
+    "name": "OpenClaw Manager",
+    "subtitle": "快速配置向导"
+  },
+  "common": {
+    "continue": "继续",
+    "login": "登录",
+    "install": "安装",
+    "start": "启动",
+    "retry": "重试",
+    "save": "保存",
+    "verify": "验证",
+    "download": "下载",
+    "processing": "处理中...",
+    "loading": "加载中...",
+    "success": "成功",
+    "failed": "失败",
+    "error": "错误",
+    "cancel": "取消",
+    "close": "关闭",
+    "back": "返回",
+    "next": "下一步",
+    "done": "完成",
+    "copy": "复制",
+    "copied": "已复制",
+    "optional": "可选"
+  },
+  "status": {
+    "connected": "已连接",
+    "connecting": "连接中...",
+    "disconnected": "已断开",
+    "online": "在线",
+    "offline": "离线",
+    "pending": "待处理",
+    "running": "运行中",
+    "completed": "已完成"
+  },
+  "steps": {
+    "cli": {
+      "label": "安装 CLI",
+      "description": "准备运行环境"
+    },
+    "gateway": {
+      "label": "验证网关",
+      "description": "确认本地服务可用"
+    },
+    "token": {
+      "label": "配置 Token",
+      "description": "连接 Discord Bot"
+    },
+    "ai": {
+      "label": "配置 AI",
+      "description": "启用模型能力"
+    },
+    "pairing": {
+      "label": "配对验证",
+      "description": "授权用户访问"
+    },
+    "probe": {
+      "label": "通道探测",
+      "description": "验证通道连接"
+    },
+    "complete": {
+      "label": "开始使用",
+      "description": "一切就绪"
+    }
+  },
+  "auth": {
+    "title": "管理员登录",
+    "subtitle": "请输入安装时设置的管理员用户名与密码",
+    "defaultAccount": "默认账号：openclaw / openclaw",
+    "username": "管理员用户名",
+    "password": "管理员密码",
+    "usernamePlaceholder": "请输入用户名",
+    "passwordPlaceholder": "请输入密码"
+  },
+  "cli": {
+    "title": "安装 OpenClaw CLI",
+    "checking": "正在检测本机 CLI 环境...",
+    "notDetected": "未检测到 CLI，请先完成安装。",
+    "ready": "CLI 已就绪，正在进入下一步...",
+    "detected": "已检测到 CLI",
+    "installButton": "一键安装 CLI",
+    "manualInstall": "手动安装",
+    "npmCommand": "npm i -g clawdbot@latest",
+    "npmNote": "当前 npm 包名仍为 clawdbot。",
+    "permissionNote": "如提示权限不足，可改用 sudo 执行。",
+    "installLogs": "安装日志",
+    "installFailed": "安装失败"
+  },
+  "gateway": {
+    "title": "验证网关",
+    "verified": "网关已验证",
+    "verifyFailed": "网关验证失败",
+    "verifying": "正在验证网关...",
+    "waiting": "等待网关启动",
+    "autoEnter": "正在自动进入下一步...",
+    "retryStart": "请查看日志并重试启动。",
+    "checking": "请稍候，系统正在检查网关状态。",
+    "startHint": "点击下方按钮启动网关，或稍后在后续步骤按需启动。",
+    "startButton": "启动网关",
+    "retryButton": "重试启动",
+    "startLogs": "启动日志",
+    "startFailed": "启动失败"
+  },
+  "token": {
+    "title": "配置 Discord Bot Token",
+    "subtitle": "粘贴您的 Discord Bot Token 以建立连接",
+    "placeholder": "粘贴 Bot Token...",
+    "howToGet": "如何获取 Token?",
+    "enterHint": "按 Enter 继续"
+  },
+  "ai": {
+    "title": "配置 AI 能力",
+    "subtitle": "为默认模型配置 API Key，否则无法生成回复",
+    "provider": "模型提供方",
+    "apiKey": "API Key",
+    "apiKeyPlaceholder": "粘贴 API Key",
+    "saveButton": "保存并继续",
+    "missingProviders": "缺少模型提供方凭证",
+    "detected": "已检测到模型凭证。",
+    "getKey": "获取密钥",
+    "configLogs": "AI 配置日志",
+    "configFailed": "配置失败",
+    "statusFailed": "状态检测失败",
+    "providers": {
+      "anthropic": "Anthropic (Claude)",
+      "openai": "OpenAI",
+      "openrouter": "OpenRouter",
+      "minimax": "MiniMax",
+      "minimax-cn": "MiniMax 国内",
+      "gemini": "Gemini (Google)",
+      "zai": "Z.AI",
+      "moonshot": "Moonshot"
+    }
+  },
+  "pairing": {
+    "title": "配对 Discord",
+    "subtitle": "在 Discord 中私信您的 Bot，获取配对码",
+    "step1": "打开 Discord，找到您的 Bot",
+    "step2": "发送任意消息获取配对码",
+    "step3": "在下方输入配对码",
+    "placeholder": "输入配对码，如 ABC123",
+    "pendingRequests": "检测到 {count} 个待配对请求！",
+    "verifyButton": "验证配对",
+    "pairingLogs": "配对日志",
+    "pairingFailed": "配对失败"
+  },
+  "probe": {
+    "title": "通道探测",
+    "description": "我们会自动验证通道连接，失败时可点击重试。",
+    "retryButton": "重新探测",
+    "probeLogs": "探测日志",
+    "probeFailed": "探测失败"
+  },
+  "complete": {
+    "title": "设置完成!",
+    "subtitle": "OpenClaw 已成功配置并连接",
+    "gatewayStatus": "网关状态",
+    "botConnection": "Bot 连接",
+    "probeStatus": "通道探测",
+    "online": "在线",
+    "connected": "已连接",
+    "passed": "通过",
+    "pendingVerify": "待验证",
+    "startChat": "开始对话",
+    "chatHint": "现在可以在 Discord 中与 Bot 对话了",
+    "resourceTitle": "可选：下载资源包",
+    "resourceDesc": "若你有额外资源（模型/素材/配置），可在此一键下载到本机。",
+    "downloadButton": "下载资源",
+    "resourceLogs": "资源下载日志",
+    "downloadFailed": "下载失败"
+  },
+  "blocking": {
+    "pendingConfirmation": "请完成当前步骤的确认后继续"
+  },
+  "errors": {
+    "unknown": "未知错误",
+    "connectionFailed": "连接失败",
+    "invalidToken": "无效的 Token",
+    "pairingFailed": "配对失败",
+    "probeFailed": "探测失败"
+  }
+}

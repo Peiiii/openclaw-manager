@@ -1,29 +1,32 @@
 import { Terminal, Settings, UserCheck, Radio } from "lucide-react";
-
-const steps = [
-  {
-    icon: Terminal,
-    title: "安装 Manager",
-    description: "运行 npm 命令全局安装 OpenClaw Manager，自动完成环境准备。"
-  },
-  {
-    icon: Settings,
-    title: "配置连接",
-    description: "在 Web 界面中配置 Discord Bot Token 和 AI 模型 API Key。"
-  },
-  {
-    icon: UserCheck,
-    title: "配对验证",
-    description: "通过 Discord 与 Bot 配对验证，授权你的账号访问权限。"
-  },
-  {
-    icon: Radio,
-    title: "开始使用",
-    description: "完成通道探测后，你的 AI 助手已就绪，随时开始对话。"
-  }
-];
+import { useTranslation } from "react-i18next";
 
 export function HowItWorks() {
+  const { t } = useTranslation();
+
+  const steps = [
+    {
+      icon: Terminal,
+      title: t("howItWorks.steps.install.title"),
+      description: t("howItWorks.steps.install.description")
+    },
+    {
+      icon: Settings,
+      title: t("howItWorks.steps.configure.title"),
+      description: t("howItWorks.steps.configure.description")
+    },
+    {
+      icon: UserCheck,
+      title: t("howItWorks.steps.pairing.title"),
+      description: t("howItWorks.steps.pairing.description")
+    },
+    {
+      icon: Radio,
+      title: t("howItWorks.steps.start.title"),
+      description: t("howItWorks.steps.start.description")
+    }
+  ];
+
   return (
     <section id="how-it-works" className="py-24 relative overflow-hidden">
       {/* Background Gradient */}
@@ -33,10 +36,10 @@ export function HowItWorks() {
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-ink mb-4">
-            <span className="text-gradient">四步</span> 部署你的 AI 助手
+            <span className="text-gradient">{t("howItWorks.title")}</span>{t("howItWorks.titleSuffix")}
           </h2>
           <p className="text-muted text-lg max-w-2xl mx-auto">
-            简单的安装流程，几分钟内即可完成部署
+            {t("howItWorks.subtitle")}
           </p>
         </div>
 

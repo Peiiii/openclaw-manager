@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Github, Copy, Check } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export function Hero() {
+  const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
   const installCommand = "npm i -g openclaw-manager\nopenclaw-manager start";
 
@@ -32,16 +34,15 @@ export function Hero() {
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Title */}
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 animate-slide-up">
-          <span className="text-ink">图形化安装配置</span>
+          <span className="text-ink">{t("hero.title1")}</span>
           <br />
-          <span className="text-gradient">OpenClaw</span>
-          <span className="text-ink"> 更简单</span>
+          <span className="text-gradient">{t("hero.title2")}</span>
+          <span className="text-ink">{t("hero.title3")}</span>
         </h1>
 
         {/* Description */}
         <p className="text-lg sm:text-xl text-muted max-w-2xl mx-auto mb-10 animate-slide-up" style={{ animationDelay: "0.1s" }}>
-          OpenClaw Manager 让你一键部署 OpenClaw（原 Clawdbot）AI 助手。
-          支持 Discord、WhatsApp、Telegram 等多平台，数据完全由你掌控。
+          {t("hero.description")}
         </p>
 
         {/* Install Command - Prominent */}
@@ -53,7 +54,7 @@ export function Hero() {
                 <div className="w-3 h-3 rounded-full bg-warning/80" />
                 <div className="w-3 h-3 rounded-full bg-success/80" />
               </div>
-              <span className="text-xs text-muted font-mono">推荐安装方式</span>
+              <span className="text-xs text-muted font-mono">{t("hero.installTitle")}</span>
               <button
                 onClick={handleCopy}
                 className="flex items-center gap-1 text-xs text-muted hover:text-ink transition-colors"
@@ -61,12 +62,12 @@ export function Hero() {
                 {copied ? (
                   <>
                     <Check className="w-3 h-3" />
-                    已复制
+                    {t("hero.copied")}
                   </>
                 ) : (
                   <>
                     <Copy className="w-3 h-3" />
-                    复制
+                    {t("hero.copy")}
                   </>
                 )}
               </button>
@@ -87,7 +88,7 @@ export function Hero() {
           >
             <Button size="lg" className="group">
               <Github className="w-5 h-5 mr-2" />
-              GitHub
+              {t("hero.github")}
               <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
           </a>

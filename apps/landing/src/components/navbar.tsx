@@ -1,15 +1,17 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { Bot, Menu, X, Github } from "lucide-react";
-
-const navLinks = [
-  { name: "特性", href: "#features" },
-  { name: "使用流程", href: "#how-it-works" }
-];
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "./language-switcher";
 
 export function Navbar() {
+  const { t } = useTranslation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const navLinks = [
+    { name: t("nav.features"), href: "#features" },
+    { name: t("nav.howItWorks"), href: "#how-it-works" }
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -52,6 +54,7 @@ export function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">
+            <LanguageSwitcher />
             <a 
               href="https://github.com/Peiiii/openclaw-manager" 
               target="_blank" 
@@ -89,7 +92,9 @@ export function Navbar() {
                   {link.name}
                 </a>
               ))}
-
+              <div className="pt-2 border-t border-line/50">
+                <LanguageSwitcher />
+              </div>
             </nav>
           </div>
         )}

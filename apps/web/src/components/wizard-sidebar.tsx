@@ -1,6 +1,18 @@
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ONBOARDING_STEPS, type OnboardingStep } from "@/features/onboarding/onboarding-steps";
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "./language-switcher";
+import type { OnboardingStep } from "@/features/onboarding/onboarding-steps";
+
+const STEP_IDS: OnboardingStep[] = [
+  "cli",
+  "gateway", 
+  "token",
+  "ai",
+  "pairing",
+  "probe",
+  "complete"
+];
 
 interface WizardSidebarProps {
     currentStep: OnboardingStep;
@@ -9,26 +21,27 @@ interface WizardSidebarProps {
 }
 
 export function WizardSidebar({ currentStep, isConnected, error }: WizardSidebarProps) {
-    const currentStepIndex = ONBOARDING_STEPS.findIndex((s) => s.id === currentStep);
+    const { t } = useTranslation();
+    const currentStepIndex = STEP_IDS.findIndex((s) => s === currentStep);
 
     return (
         <aside className="relative hidden md:flex w-80 shrink-0 flex-col border-r border-line/40 bg-white/40 backdrop-blur-xl p-8">
             {/* Branding */}
             <div className="mb-10">
-                <h1 className="text-xl font-semibold tracking-tight">OpenClaw Manager</h1>
-                <p className="mt-1 text-sm text-muted">快速配置向导</p>
+                <h1 className="text-xl font-semibold tracking-tight">{t("app.name")}</h1>
+                <p className="mt-1 text-sm text-muted">{t("app.subtitle")}</p>
             </div>
 
             {/* Step list */}
             <nav className="flex-1 space-y-2">
-                {ONBOARDING_STEPS.map((step, idx) => {
+                {STEP_IDS.map((stepId, idx) => {
                     const isFinal = currentStep === "complete" && idx === currentStepIndex;
                     const isCompleted = idx < currentStepIndex || isFinal;
                     const isCurrent = idx === currentStepIndex && !isFinal;
 
                     return (
                         <div
-                            key={step.id}
+                            key={stepId}
                             className={cn(
                                 "relative flex gap-4 rounded-2xl p-4 transition-all duration-300",
                                 isCurrent && "bg-accent/10",
@@ -36,7 +49,7 @@ export function WizardSidebar({ currentStep, isConnected, error }: WizardSidebar
                             )}
                         >
                             {/* Vertical line connector */}
-                            {idx < ONBOARDING_STEPS.length - 1 && (
+                            {idx < STEP_IDS.length - 1 && (
                                 <div
                                     className={cn(
                                         "absolute left-[2.25rem] top-[3.5rem] w-0.5 h-8 transition-all duration-300",
@@ -65,9 +78,9 @@ export function WizardSidebar({ currentStep, isConnected, error }: WizardSidebar
                                         isCurrent ? "text-accent" : isCompleted ? "text-success" : "text-muted"
                                     )}
                                 >
-                                    {step.label}
+                                    {t(`steps.${stepId}.label`)}
                                 </div>
-                                <div className="mt-0.5 text-xs text-muted truncate">{step.description}</div>
+                                <div className="mt-0.5 text-xs text-muted truncate">{t(`steps.${stepId}.description`)}</div>
                             </div>
                         </div>
                     );
@@ -76,14 +89,17 @@ export function WizardSidebar({ currentStep, isConnected, error }: WizardSidebar
 
             {/* Footer status */}
             <div className="pt-6 border-t border-line/40">
-                <div className="flex items-center gap-2 text-xs text-muted">
-                    <span
-                        className={cn(
-                            "h-2 w-2 rounded-full",
-                            isConnected ? "bg-success animate-pulse" : "bg-danger"
-                        )}
-                    />
-                    <span>{isConnected ? "已连接" : "连接中..."}</span>
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-xs text-muted">
+                        <span
+                            className={cn(
+                                "h-2 w-2 rounded-full",
+                                isConnected ? "bg-success animate-pulse" : "bg-danger"
+                            )}
+                        />
+                        <span>{isConnected ? t("status.connected") : t("status.connecting")}</span>
+                    </div>
+                    <LanguageSwitcher />
                 </div>
                 {error && <div className="mt-2 text-xs text-danger">{error}</div>}
             </div>
@@ -96,28 +112,27 @@ interface MobileProgressProps {
 }
 
 export function MobileProgress({ currentStep }: MobileProgressProps) {
-    const currentStepIndex = ONBOARDING_STEPS.findIndex((s) => s.id === currentStep);
+    const { t } = useTranslation();
+    const currentStepIndex = STEP_IDS.findIndex((s) => s === currentStep);
+    const totalSteps = STEP_IDS.length;
+    const progress = ((currentStepIndex + 1) / totalSteps) * 100;
 
     return (
-        <div className="md:hidden mb-6 flex justify-center gap-2">
-            {ONBOARDING_STEPS.map((step, idx) => {
-                const isFinal = currentStep === "complete" && idx === currentStepIndex;
-                const isCompleted = idx < currentStepIndex || isFinal;
-                const isCurrent = idx === currentStepIndex && !isFinal;
-                return (
-                    <div
-                        key={step.id}
-                        className={cn(
-                            "h-2 w-2 rounded-full transition-all",
-                            isCompleted
-                                ? "bg-success"
-                                : isCurrent
-                                    ? "bg-accent w-6"
-                                    : "bg-line/50"
-                        )}
-                    />
-                );
-            })}
+        <div className="md:hidden mb-6">
+            <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-ink">
+                    {t(`steps.${currentStep}.label`)}
+                </span>
+                <span className="text-xs text-muted">
+                    {currentStepIndex + 1} / {totalSteps}
+                </span>
+            </div>
+            <div className="h-2 bg-line/30 rounded-full overflow-hidden">
+                <div 
+                    className="h-full bg-accent transition-all duration-300"
+                    style={{ width: `${progress}%` }}
+                />
+            </div>
         </div>
     );
 }

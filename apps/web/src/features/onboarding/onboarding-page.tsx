@@ -1,18 +1,19 @@
 import { Card } from "@/components/ui/card";
 import { WizardSidebar, MobileProgress } from "@/components/wizard-sidebar";
 import { useStatusStore } from "@/stores/status-store";
+import { useTranslation } from "react-i18next";
 
 import { OnboardingOrchestrator } from "./containers/onboarding-orchestrator";
 import { OnboardingStepRenderer } from "./containers/onboarding-step-renderer";
-import { getOnboardingStepMeta } from "./onboarding-steps";
 import type { OnboardingBlockingReason } from "./domain/machine";
 import { useOnboardingFlow } from "./use-onboarding-flow";
 
 export function OnboardingPage() {
+  const { t } = useTranslation();
   const status = useStatusStore((state) => state.status);
   const error = useStatusStore((state) => state.error);
   const { flow } = useOnboardingFlow();
-  const blockingMessage = buildBlockingMessage(flow.blockingReason);
+  const blockingMessage = buildBlockingMessage(flow.blockingReason, t);
 
   return (
     <div className="min-h-screen bg-bg text-ink flex">
@@ -44,11 +45,10 @@ export function OnboardingPage() {
   );
 }
 
-function buildBlockingMessage(reason: OnboardingBlockingReason | null) {
+function buildBlockingMessage(reason: OnboardingBlockingReason | null, t: any) {
   if (!reason) return null;
   if (reason.type === "pending-confirmation") {
-    const step = getOnboardingStepMeta(reason.step);
-    return `正在等待系统确认「${step.label}」。确认完成后会自动进入下一步。`;
+    return t("blocking.pendingConfirmation");
   }
   return null;
 }

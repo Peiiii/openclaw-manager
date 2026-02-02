@@ -1,0 +1,117 @@
+{
+  "nav": {
+    "features": "特性",
+    "howItWorks": "使用流程"
+  },
+  "hero": {
+    "title1": "图形化安装配置",
+    "title2": "OpenClaw",
+    "title3": "更简单",
+    "description": "OpenClaw Manager 让你一键部署 OpenClaw（原 Clawdbot）AI 助手。支持 Discord、WhatsApp、Telegram 等多平台，数据完全由你掌控。",
+    "installTitle": "推荐安装方式",
+    "copy": "复制",
+    "copied": "已复制",
+    "github": "GitHub"
+  },
+  "features": {
+    "title": "为什么选择",
+    "subtitle": "一款真正做事的 AI 助手，让你的智能助手触手可及",
+    "items": {
+      "localFirst": {
+        "title": "本地优先",
+        "description": "在你自己的设备上运行，数据完全由你控制，无需担心隐私泄露。"
+      },
+      "multiChannel": {
+        "title": "多渠道支持",
+        "description": "支持 Discord、WhatsApp、Telegram、Slack 等主流通讯平台。"
+      },
+      "aiAssistant": {
+        "title": "AI 助手",
+        "description": "24/7 全天候 AI 助理，支持多种大语言模型，智能对话交互。"
+      },
+      "secure": {
+        "title": "安全可靠",
+        "description": "端到端加密通信，开源代码可审计，确保数据和对话安全。"
+      },
+      "oneClickDeploy": {
+        "title": "一键部署",
+        "description": "简单的安装脚本，几分钟内完成部署，无需复杂的服务器配置。"
+      },
+      "modelCompatible": {
+        "title": "模型兼容",
+        "description": "支持 OpenAI、Claude、国产大模型等多种 AI 提供商。"
+      },
+      "realtime": {
+        "title": "实时响应",
+        "description": "优化的推理引擎，毫秒级响应速度，流畅的交互体验。"
+      },
+      "openSource": {
+        "title": "开源免费",
+        "description": "完全开源，GitHub 上超过 10 万 Star，社区驱动持续迭代。"
+      }
+    }
+  },
+  "howItWorks": {
+    "title": "四步",
+    "titleSuffix": "部署你的 AI 助手",
+    "subtitle": "简单的安装流程，几分钟内即可完成部署",
+    "steps": {
+      "install": {
+        "title": "安装 Manager",
+        "description": "运行 npm 命令全局安装 OpenClaw Manager，自动完成环境准备。"
+      },
+      "configure": {
+        "title": "配置连接",
+        "description": "在 Web 界面中配置 Discord Bot Token 和 AI 模型 API Key。"
+      },
+      "pairing": {
+        "title": "配对验证",
+        "description": "通过 Discord 与 Bot 配对验证，授权你的账号访问权限。"
+      },
+      "start": {
+        "title": "开始使用",
+        "description": "完成通道探测后，你的 AI 助手已就绪，随时开始对话。"
+      }
+    }
+  },
+  "pricing": {
+    "title": "开源",
+    "titleHighlight": "免费",
+    "titleSuffix": "，自主可控",
+    "subtitle": "OpenClaw 完全开源免费，你可以自主部署，也可以选择未来的托管服务",
+    "comingSoon": "即将推出",
+    "plans": {
+      "opensource": {
+        "name": "开源版",
+        "description": "完全免费，自主部署",
+        "price": "免费",
+        "features": [
+          "本地部署运行",
+          "数据完全自主",
+          "Discord / WhatsApp / Telegram",
+          "支持多种 AI 模型",
+          "开源代码可审计",
+          "社区支持"
+        ],
+        "cta": "GitHub 下载"
+      },
+      "hosted": {
+        "name": "托管版",
+        "description": "即将推出，敬请期待",
+        "price": "即将推出",
+        "features": [
+          "云端一键部署",
+          "自动更新维护",
+          "多平台同时接入",
+          "高级分析面板",
+          "优先技术支持",
+          "SLA 保障"
+        ],
+        "cta": "预约体验"
+      }
+    }
+  },
+  "footer": {
+    "copyright": "Open source under MIT License"
+  }
+}
