@@ -1,20 +1,28 @@
 import { parseJsonFromCliOutput } from "../lib/cli-output.js";
+import { resolveCli } from "../lib/openclaw-cli.js";
 import { parsePositiveInt } from "../lib/utils.js";
 import type { CommandRunner } from "../lib/runner.js";
 
 const DEFAULT_DISCORD_TOKEN_TIMEOUT_MS = 20_000;
 
 export async function saveDiscordToken(runCommand: CommandRunner, token: string) {
+  const cli = resolveCli();
   const args = ["config", "set", "channels.discord.token", token];
   const timeoutMs =
     parsePositiveInt(process.env.MANAGER_DISCORD_TOKEN_TIMEOUT_MS) ??
     DEFAULT_DISCORD_TOKEN_TIMEOUT_MS;
-  const setResult = await runCommandStep(runCommand, "config set token", args, timeoutMs);
+  const setResult = await runCommandStep(
+    runCommand,
+    cli.command,
+    "config set token",
+    args,
+    timeoutMs
+  );
   if (!setResult.ok) {
     return { ok: false, error: formatStepError(setResult, timeoutMs) };
   }
 
-  const allowResult = await ensureDiscordDmAllow(runCommand, timeoutMs);
+  const allowResult = await ensureDiscordDmAllow(runCommand, cli.command, timeoutMs);
   if (!allowResult.ok) {
     return { ok: false, error: allowResult.error };
   }
@@ -22,8 +30,9 @@ export async function saveDiscordToken(runCommand: CommandRunner, token: string)
 }
 
 export async function approveDiscordPairing(runCommand: CommandRunner, code: string) {
+  const cli = resolveCli();
   const args = ["pairing", "approve", "discord", code];
-  return runCommand("clawdbot", args, 8000)
+  return runCommand(cli.command, args, 8000)
     .then(() => ({ ok: true } as const))
     .catch((err: unknown) => ({
       ok: false,
@@ -31,9 +40,14 @@ export async function approveDiscordPairing(runCommand: CommandRunner, code: str
     }));
 }
 
-async function ensureDiscordDmAllow(runCommand: CommandRunner, timeoutMs: number) {
+async function ensureDiscordDmAllow(
+  runCommand: CommandRunner,
+  command: string,
+  timeoutMs: number
+) {
   const getResult = await runCommandStep(
     runCommand,
+    command,
     "config get allowFrom",
     ["config", "get", "channels.discord.dm.allowFrom", "--json"],
     timeoutMs
@@ -48,6 +62,7 @@ async function ensureDiscordDmAllow(runCommand: CommandRunner, timeoutMs: number
 
   const setResult = await runCommandStep(
     runCommand,
+    command,
     "config set allowFrom",
     ["config", "set", "channels.discord.dm.allowFrom", "[\"*\"]"],
     timeoutMs
@@ -60,6 +75,7 @@ async function ensureDiscordDmAllow(runCommand: CommandRunner, timeoutMs: number
 
 async function runCommandStep(
   runCommand: CommandRunner,
+  command: string,
   step: string,
   args: string[],
   timeoutMs: number
@@ -69,7 +85,7 @@ async function runCommandStep(
 > {
   const started = Date.now();
   try {
-    const output = await runCommand("clawdbot", args, timeoutMs);
+    const output = await runCommand(command, args, timeoutMs);
     return {
       ok: true,
       step,

@@ -67,8 +67,5 @@ export function resolveConfigDirCandidates(flags) {
     const explicit = flags.configDir ?? process.env.MANAGER_CONFIG_DIR;
     if (explicit)
         return [explicit];
-    return [
-        path.join(os.homedir(), ".openclaw-manager"),
-        path.join(os.homedir(), ".clawdbot-manager")
-    ];
+    return [path.join(os.homedir(), ".openclaw-manager")];
 }

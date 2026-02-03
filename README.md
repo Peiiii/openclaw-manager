@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/openclaw-manager.svg)](https://www.npmjs.com/package/openclaw-manager)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> OpenClaw (formerly Clawdbot) installation and configuration tool. Complete installation, configuration, and pairing locally in one place.
+> OpenClaw installation and configuration tool. Complete installation, configuration, and pairing locally in one place.
 
 ![OpenClaw Manager Screenshot](images/screenshots/openclaw-manager-en.png)
 
@@ -65,7 +65,7 @@ For more Docker parameters and instructions:
 1. Run the installation command → Manager service starts automatically
 2. Open browser and visit `http://localhost:17321`
 3. Log in with the username and password set during installation
-4. Follow the guide to install OpenClaw CLI (npm package `clawdbot`)
+4. Follow the guide to install OpenClaw CLI (npm package `openclaw`)
 5. Configure Discord Bot Token
 6. Configure AI model (API Key)
 7. Pair with your Bot

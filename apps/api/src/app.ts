@@ -16,6 +16,7 @@ const DEFAULT_CORS_ORIGINS = [
 type AppOptions = {
   corsOrigins: string[];
   webDist?: string | null;
+  webUrl?: string | null;
 };
 
 export function createApp(deps: ApiDeps, options: AppOptions) {
@@ -47,6 +48,20 @@ export function createApp(deps: ApiDeps, options: AppOptions) {
         return c.notFound();
       }
       return serveStaticFile(c.req.path, options.webDist ?? "");
+    });
+  } else if (options.webUrl) {
+    const webUrl = options.webUrl;
+    app.get("*", async (c) => {
+      const reqPath = c.req.path;
+      if (reqPath.startsWith("/api") || reqPath === "/health") {
+        return c.notFound();
+      }
+      if (!webUrl) {
+        return c.notFound();
+      }
+      const source = new URL(c.req.url);
+      const target = new URL(`${source.pathname}${source.search}`, webUrl);
+      return c.redirect(target.toString(), 307);
     });
   }
 

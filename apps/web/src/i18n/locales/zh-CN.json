@@ -83,8 +83,8 @@
     "detected": "已检测到 CLI",
     "installButton": "一键安装 CLI",
     "manualInstall": "手动安装",
-    "npmCommand": "npm i -g clawdbot@latest",
-    "npmNote": "当前 npm 包名仍为 clawdbot。",
+    "npmCommand": "npm i -g openclaw@latest",
+    "npmNote": "官方 npm 包名为 openclaw。",
     "permissionNote": "如提示权限不足，可改用 sudo 执行。",
     "installLogs": "安装日志",
     "installFailed": "安装失败"

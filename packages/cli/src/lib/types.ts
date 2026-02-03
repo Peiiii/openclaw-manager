@@ -15,11 +15,9 @@ export interface CliFlags {
   errorLogPath?: string;
   nonInteractive?: boolean;
   dryRun?: boolean;
-  keepClawdbot?: boolean;
   noStop?: boolean;
   force?: boolean;
   installDir?: string;
-  clawdbotDir?: string;
 }
 
 export interface ParsedArgs {

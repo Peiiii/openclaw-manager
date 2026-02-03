@@ -96,6 +96,8 @@ interface CliStepProps {
     jobStatus: JobStatus;
     jobError: string | null;
     onInstall: () => void;
+    npmCommand?: string;
+    npmNote?: string;
 }
 
 export function CliStep({
@@ -107,7 +109,9 @@ export function CliStep({
     logs,
     jobStatus,
     jobError,
-    onInstall
+    onInstall,
+    npmCommand,
+    npmNote
 }: CliStepProps) {
     const { t } = useTranslation();
     
@@ -149,8 +153,8 @@ export function CliStep({
             )}
             <div className="rounded-2xl bg-line/20 p-4 text-left text-xs text-muted">
                 <div className="mb-2 text-[11px] uppercase tracking-widest text-muted">{t("cli.manualInstall")}</div>
-                <code className="break-words">{t("cli.npmCommand")}</code>
-                <div className="mt-2 text-[11px]">{t("cli.npmNote")}</div>
+                <code className="break-words">{npmCommand ?? t("cli.npmCommand")}</code>
+                <div className="mt-2 text-[11px]">{npmNote ?? t("cli.npmNote")}</div>
                 <div className="mt-1 text-[11px]">{t("cli.permissionNote")}</div>
             </div>
             <JobLogPanel title={t("cli.installLogs")} logs={logs} status={jobStatus} />

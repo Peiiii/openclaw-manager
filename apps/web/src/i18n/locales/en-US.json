@@ -83,8 +83,8 @@
     "detected": "CLI detected",
     "installButton": "One-Click Install CLI",
     "manualInstall": "Manual Install",
-    "npmCommand": "npm i -g clawdbot@latest",
-    "npmNote": "Current npm package name is still clawdbot.",
+    "npmCommand": "npm i -g openclaw@latest",
+    "npmNote": "Official npm package name is openclaw.",
     "permissionNote": "If permission denied, try using sudo.",
     "installLogs": "Installation Logs",
     "installFailed": "Installation failed"

@@ -1,7 +1,7 @@
 import { DEFAULT_GATEWAY_HOST, DEFAULT_GATEWAY_PORT } from "../lib/constants.js";
 import { checkGateway, waitForGateway } from "../lib/gateway.js";
 import { runCommandWithLogs } from "../lib/runner.js";
-import { getCliStatus } from "../lib/system.js";
+import { getCliStatus } from "../lib/openclaw-cli.js";
 import { parsePort, parsePositiveInt, sleep } from "../lib/utils.js";
 import { setLastProbe } from "../lib/onboarding.js";
 import type { ApiDeps } from "../deps.js";
@@ -35,25 +35,25 @@ export async function runQuickstart(
   let probeOk: boolean | undefined;
   const gatewayTimeoutMs = parsePositiveInt(process.env.MANAGER_GATEWAY_TIMEOUT_MS) ?? 60_000;
   log?.(
-    `网关参数: host=${gatewayHost} port=${gatewayPort} timeout=${gatewayTimeoutMs}ms`
+    `Gateway params: host=${gatewayHost} port=${gatewayPort} timeout=${gatewayTimeoutMs}ms`
   );
 
-  log?.("检查 CLI 环境...");
+  log?.("Checking CLI environment...");
   const cli = await getCliStatus(deps.runCommand);
   if (!cli.installed) {
-    log?.("未检测到 CLI。");
-    return { ok: false, error: "clawdbot CLI not installed", status: 400 };
+    log?.("OpenClaw CLI not detected.");
+    return { ok: false, error: `${cli.displayName} CLI not installed`, status: 400 };
   }
   if (cli.path) {
-    log?.(`CLI 路径: ${cli.path}`);
+    log?.(`CLI path: ${cli.path}`);
   }
   if (cli.version) {
-    log?.(`CLI 版本: ${cli.version}`);
+    log?.(`CLI version: ${cli.version}`);
   }
 
   if (startGateway) {
-    log?.("初始化网关配置...");
-    await runCommandWithLogs("clawdbot", ["config", "set", "gateway.mode", "local"], {
+    log?.("Initializing gateway configuration...");
+    await runCommandWithLogs(cli.command, ["config", "set", "gateway.mode", "local"], {
       cwd: deps.repoRoot,
       env: process.env,
       timeoutMs: 8000,
@@ -71,8 +71,8 @@ export async function runQuickstart(
       "--force"
     ];
 
-    log?.("启动网关中...");
-    log?.(`启动命令: clawdbot ${gatewayArgs.join(" ")}`);
+    log?.("Starting gateway...");
+    log?.(`Start command: ${cli.command} ${gatewayArgs.join(" ")}`);
     const started = deps.processManager.startProcess("gateway-run", {
       args: gatewayArgs,
       onLog: (line) => log?.(`[gateway] ${line}`)
@@ -86,7 +86,7 @@ export async function runQuickstart(
       .find((process) => process.id === "gateway-run");
     if (earlySnapshot && !earlySnapshot.running) {
       if (earlySnapshot.lastLines.length) {
-        log?.("网关进程已退出，输出如下：");
+        log?.("Gateway process exited. Output:");
         for (const line of earlySnapshot.lastLines) {
           log?.(`[gateway] ${line}`);
         }
@@ -96,10 +96,10 @@ export async function runQuickstart(
 
     gatewayReady = await waitForGateway(gatewayHost, gatewayPort, gatewayTimeoutMs);
     if (!gatewayReady) {
-      log?.("网关启动超时。");
+      log?.("Gateway start timed out.");
       const probe = await checkGateway(gatewayHost, gatewayPort);
       log?.(
-        `网关探测结果: ok=${probe.ok} error=${probe.error ?? "none"} latency=${
+        `Gateway probe result: ok=${probe.ok} error=${probe.error ?? "none"} latency=${
           probe.latencyMs ?? "n/a"
         }ms`
       );
@@ -107,53 +107,55 @@ export async function runQuickstart(
         .listProcesses()
         .find((process) => process.id === "gateway-run");
       if (snapshot?.lastLines?.length) {
-        log?.("网关进程输出（最近日志）：");
+        log?.("Gateway process output (recent logs):");
         for (const line of snapshot.lastLines) {
           log?.(`[gateway] ${line}`);
         }
       }
       if (snapshot && snapshot.exitCode !== null) {
-        log?.(`网关进程已退出，exit code: ${snapshot.exitCode}`);
+        log?.(`Gateway process exited, exit code: ${snapshot.exitCode}`);
       }
       if (snapshot) {
         log?.(
-          `网关进程状态: running=${snapshot.running} pid=${snapshot.pid ?? "?"}`
+          `Gateway process status: running=${snapshot.running} pid=${snapshot.pid ?? "?"}`
         );
       }
       log?.(
-        `排查建议: 确认端口 ${gatewayPort} 未被占用，或执行 clawdbot logs --follow 查看网关日志。`
+        `Troubleshooting: ensure port ${gatewayPort} is free, or run ${cli.command} logs --follow to inspect gateway logs.`
       );
       return { ok: false, error: "gateway not ready", status: 504 };
     }
-    log?.("网关已就绪。");
+    log?.("Gateway is ready.");
   } else {
-    log?.("检查网关状态...");
+    log?.("Checking gateway status...");
     const snapshot = await checkGateway(gatewayHost, gatewayPort);
     gatewayReady = snapshot.ok;
     if (!gatewayReady) {
       log?.(
-        `网关未就绪: error=${snapshot.error ?? "none"} latency=${snapshot.latencyMs ?? "n/a"}ms`
+        `Gateway not ready: error=${snapshot.error ?? "none"} latency=${snapshot.latencyMs ?? "n/a"}ms`
       );
     } else {
-      log?.("网关已就绪。");
+      log?.("Gateway is ready.");
     }
   }
 
   if (runProbe) {
     const probeAttempts = parsePositiveInt(process.env.MANAGER_PROBE_ATTEMPTS) ?? 3;
     const probeDelayMs = parsePositiveInt(process.env.MANAGER_PROBE_DELAY_MS) ?? 2000;
-    log?.("执行通道探测...");
+    log?.("Running channel probe...");
     for (let attempt = 1; attempt <= probeAttempts; attempt += 1) {
       probeOk = await deps
-        .runCommand("clawdbot", ["channels", "status", "--probe"], 12_000)
+        .runCommand(cli.command, ["channels", "status", "--probe"], 12_000)
         .then(() => true)
         .catch(() => false);
       if (probeOk || attempt >= probeAttempts) break;
-      log?.(`通道探测未通过，${probeDelayMs}ms 后重试 (${attempt}/${probeAttempts})...`);
+      log?.(
+        `Channel probe failed, retrying in ${probeDelayMs}ms (${attempt}/${probeAttempts})...`
+      );
       await sleep(probeDelayMs);
     }
     setLastProbe(Boolean(probeOk));
-    log?.(probeOk ? "通道探测通过。" : "通道探测未通过。");
+    log?.(probeOk ? "Channel probe passed." : "Channel probe failed.");
   }
 
   return { ok: true, gatewayReady, probeOk };

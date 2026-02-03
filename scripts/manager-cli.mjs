@@ -592,7 +592,7 @@ function formatError(err) {
 }
 
 function printHelp() {
-  console.log(`clawdbot-manager CLI
+  console.log(`openclaw-manager CLI
 
 Usage:
   node scripts/manager-cli.mjs <command> [--flags]
@@ -629,7 +629,6 @@ Flags:
   --no-manager            Skip stopping manager (stop-all only)
   --no-sandboxes          Skip stopping sandboxes (stop-all only)
   --no-gateway            Skip stopping gateway processes (stop-all only)
-  --keep-clawdbot         Keep ~/.clawdbot data (reset only)
   --no-stop               Skip stopping services (reset only)
   --force                 Allow removing non-default paths (reset only)
   --dir <path>            Sandbox directory (sandbox only)
@@ -800,7 +799,7 @@ function buildProcessSnapshot(params) {
   const systemdActive = readSystemdStatus();
   const sandboxes = listSandboxInstances();
   const gatewayPorts = [
-    parseNumberFlag(process.env.CLAWDBOT_GATEWAY_PORT) ?? 18789,
+    parseNumberFlag(process.env.OPENCLAW_GATEWAY_PORT) ?? 18789,
     ...sandboxes
       .map((entry) => entry.gatewayPort)
       .filter((value) => typeof value === "number")
@@ -880,7 +879,7 @@ function listSandboxInstances() {
     return [];
   }
   return entries
-    .filter((entry) => entry.isDirectory() && entry.name.startsWith("clawdbot-manager-sandbox-"))
+    .filter((entry) => entry.isDirectory() && entry.name.startsWith("openclaw-manager-sandbox-"))
     .map((entry) => {
       const rootDir = path.join(dir, entry.name);
       const metaPath = path.join(rootDir, "sandbox.json");
@@ -930,7 +929,7 @@ function isPidRunning(pid) {
 
 function listGatewayProcesses() {
   if (process.platform === "win32") return [];
-  const result = spawnSync("pgrep", ["-fl", "clawdbot-gateway"], { encoding: "utf-8" });
+  const result = spawnSync("pgrep", ["-fl", "openclaw-gateway"], { encoding: "utf-8" });
   if (result.error || result.status !== 0) return [];
   return result.stdout
     .split(/\n/)
@@ -941,8 +940,8 @@ function listGatewayProcesses() {
 function parseGatewayProcessLine(line) {
   const tokens = line.split(/\s+/);
   const pid = Number(tokens[0]);
-  const portMatch = line.match(/CLAWDBOT_GATEWAY_PORT=(\d+)/);
-  const labelMatch = line.match(/CLAWDBOT_LAUNCHD_LABEL=([^\s]+)/);
+  const portMatch = line.match(/OPENCLAW_GATEWAY_PORT=(\d+)/);
+  const labelMatch = line.match(/OPENCLAW_LAUNCHD_LABEL=([^\s]+)/);
   const source = line.includes("VSCODE_PROCESS_TITLE=extension-host")
     ? "vscode"
     : labelMatch
@@ -1158,13 +1157,11 @@ async function resetEnvironment(params) {
   return resetEnvironmentShared({
     flags: {
       dryRun: params.flags["dry-run"] === true,
-      keepClawdbot: params.flags["keep-clawdbot"] === true,
       noStop: params.flags["no-stop"] === true,
       force: params.flags.force === true,
       configDir: params.flags["config-dir"],
       configPath: params.flags["config-path"],
-      installDir: params.flags["install-dir"],
-      clawdbotDir: params.flags["clawdbot-dir"]
+      installDir: params.flags["install-dir"]
     },
     stopAll: () => stopAll({ flags: params.flags, config: params.config }),
     sandboxDirs
@@ -1270,9 +1267,9 @@ async function createSandbox(params) {
       MANAGER_API_PORT: String(apiPort),
       MANAGER_AUTH_USERNAME: admin.user,
       MANAGER_AUTH_PASSWORD: admin.pass,
-      CLAWDBOT_STATE_DIR: stateDir,
-      CLAWDBOT_OAUTH_DIR: credentialsDir,
-      CLAWDBOT_GATEWAY_PORT: String(gatewayPort)
+      OPENCLAW_STATE_DIR: stateDir,
+      OPENCLAW_OAUTH_DIR: credentialsDir,
+      OPENCLAW_GATEWAY_PORT: String(gatewayPort)
     };
     const child = spawn("node", [apiEntry], {
       cwd: repoRoot,
@@ -1363,7 +1360,7 @@ function resolveSandboxDir(flags) {
     return path.resolve(value.trim());
   }
   const stamp = new Date().toISOString().replace(/[:.]/g, "-");
-  return path.join(os.tmpdir(), `clawdbot-manager-sandbox-${stamp}`);
+  return path.join(os.tmpdir(), `openclaw-manager-sandbox-${stamp}`);
 }
 
 function resolveSandboxDirRequired(flags) {

@@ -22,16 +22,26 @@ export async function loginWithCredentials(username: string, password: string) {
 }
 
 export async function checkAuthSession() {
-  const res = await apiFetch("/api/auth/session");
-  const data = (await res.json().catch(() => null)) as AuthSessionResponse | null;
-  if (!res.ok || !data) {
+  try {
+    const res = await apiFetch("/api/auth/session");
+    const data = (await res.json().catch(() => null)) as AuthSessionResponse | null;
+    if (!res.ok || !data) {
+      return {
+        ok: false,
+        authenticated: false,
+        required: true,
+        configured: false,
+        error: `session check failed: ${res.status}`
+      };
+    }
+    return data;
+  } catch (err) {
     return {
       ok: false,
       authenticated: false,
       required: true,
       configured: false,
-      error: `session check failed: ${res.status}`
+      error: err instanceof Error ? err.message : String(err)
     };
   }
-  return data;
 }

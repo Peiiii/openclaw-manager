@@ -13,11 +13,9 @@ const longKeyMap = {
     "error-log-path": "errorLogPath",
     "non-interactive": "nonInteractive",
     "dry-run": "dryRun",
-    "keep-clawdbot": "keepClawdbot",
     "no-stop": "noStop",
     force: "force",
-    "install-dir": "installDir",
-    "clawdbot-dir": "clawdbotDir"
+    "install-dir": "installDir"
 };
 const shortKeyMap = {
     h: "help",
@@ -42,7 +40,6 @@ export function parseArgs(argv) {
                 key === "version" ||
                 key === "nonInteractive" ||
                 key === "dryRun" ||
-                key === "keepClawdbot" ||
                 key === "noStop" ||
                 key === "force") {
                 flags[key] = true;

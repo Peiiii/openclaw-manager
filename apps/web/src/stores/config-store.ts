@@ -51,6 +51,10 @@ export const useConfigStore = create<ConfigState>()(
   )
 );
 
+export function getDefaultApiBase() {
+  return DEFAULT_API_BASE;
+}
+
 function resolveDefaultApiBase() {
   const envBase =
     import.meta.env.VITE_MANAGER_API_URL ?? import.meta.env.VITE_ONBOARDING_API_URL;

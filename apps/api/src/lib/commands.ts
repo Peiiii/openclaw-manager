@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import { resolveCli } from "./openclaw-cli.js";
 
 export type CommandDefinition = {
   id: string;
@@ -8,6 +9,7 @@ export type CommandDefinition = {
   args: string[];
   cwd: string;
   allowRun: boolean;
+  commandType?: "openclaw-cli";
 };
 
 export type ProcessSnapshot = {
@@ -31,6 +33,7 @@ export type StartProcessOptions = {
 type ManagedProcess = {
   def: CommandDefinition;
   args: string[];
+  command: string;
   child: ReturnType<typeof spawn> | null;
   logs: string[];
   startedAt: Date | null;
@@ -38,13 +41,14 @@ type ManagedProcess = {
 };
 
 export function buildCommandRegistry(root: string): CommandDefinition[] {
+  const cliCommand = resolveCli().command;
   return [
     {
       id: "install-cli",
       title: "Install OpenClaw CLI",
       description: "Install the latest OpenClaw CLI (may require sudo)",
       command: "npm",
-      args: ["i", "-g", "clawdbot@latest"],
+      args: ["i", "-g", "openclaw@latest"],
       cwd: root,
       allowRun: true
     },
@@ -52,19 +56,21 @@ export function buildCommandRegistry(root: string): CommandDefinition[] {
       id: "gateway-run",
       title: "Start gateway",
       description: "Run the local gateway (loopback only)",
-      command: "clawdbot",
+      command: cliCommand,
       args: ["gateway", "run", "--allow-unconfigured", "--bind", "loopback", "--port", "18789", "--force"],
       cwd: root,
-      allowRun: true
+      allowRun: true,
+      commandType: "openclaw-cli"
     },
     {
       id: "channels-probe",
       title: "Probe channels",
       description: "Check channel connectivity",
-      command: "clawdbot",
+      command: cliCommand,
       args: ["channels", "status", "--probe"],
       cwd: root,
-      allowRun: true
+      allowRun: true,
+      commandType: "openclaw-cli"
     }
   ];
 }
@@ -90,7 +96,8 @@ export function createProcessManager(commandRegistry: CommandDefinition[]) {
     }
 
     const args = options?.args ?? def.args;
-    const child = spawn(def.command, args, {
+    const command = resolveCommand(def);
+    const child = spawn(command, args, {
       cwd: def.cwd,
       env: options?.env ?? process.env
     });
@@ -98,6 +105,7 @@ export function createProcessManager(commandRegistry: CommandDefinition[]) {
     const managed: ManagedProcess = {
       def,
       args,
+      command,
       child,
       logs: [],
       startedAt: new Date(),
@@ -159,10 +167,11 @@ export function createProcessManager(commandRegistry: CommandDefinition[]) {
 
 function snapshotProcess(def: CommandDefinition, managed: ManagedProcess | null): ProcessSnapshot {
   const running = Boolean(managed?.child && !managed.child.killed && managed.exitCode == null);
+  const command = managed?.command ?? resolveCommand(def);
   return {
     id: def.id,
     title: def.title,
-    command: formatCommand(def, managed?.args),
+    command: formatCommand(command, managed?.args ?? def.args),
     cwd: def.cwd,
     running,
     pid: managed?.child?.pid ?? null,
@@ -172,6 +181,13 @@ function snapshotProcess(def: CommandDefinition, managed: ManagedProcess | null)
   };
 }
 
-function formatCommand(cmd: CommandDefinition, argsOverride?: string[]) {
-  return [cmd.command, ...(argsOverride ?? cmd.args)].join(" ");
+function formatCommand(command: string, args: string[]) {
+  return [command, ...args].join(" ");
+}
+
+function resolveCommand(def: CommandDefinition) {
+  if (def.commandType === "openclaw-cli") {
+    return resolveCli().command;
+  }
+  return def.command;
 }

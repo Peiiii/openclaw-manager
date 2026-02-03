@@ -20,8 +20,8 @@ export async function downloadResource(options: DownloadOptions, onLog: (line: s
   const targetPath = path.join(targetDir, safeName);
 
   fs.mkdirSync(targetDir, { recursive: true });
-  onLog(`开始下载: ${url}`);
-  onLog(`保存路径: ${targetPath}`);
+  onLog(`Starting download: ${url}`);
+  onLog(`Save path: ${targetPath}`);
 
   const res = await fetch(url);
   if (!res.ok) {
@@ -33,7 +33,7 @@ export async function downloadResource(options: DownloadOptions, onLog: (line: s
 
   const total = Number(res.headers.get("content-length") ?? "0");
   if (total > 0) {
-    onLog(`内容大小: ${(total / 1024 / 1024).toFixed(2)} MB`);
+    onLog(`Content size: ${(total / 1024 / 1024).toFixed(2)} MB`);
   }
 
   const readable = Readable.fromWeb(res.body as unknown as ReadableStream);
@@ -46,15 +46,15 @@ export async function downloadResource(options: DownloadOptions, onLog: (line: s
       lastLogged = received;
       if (total > 0) {
         const percent = ((received / total) * 100).toFixed(1);
-        onLog(`下载进度: ${percent}%`);
+        onLog(`Download progress: ${percent}%`);
       } else {
-        onLog(`已下载: ${(received / 1024 / 1024).toFixed(2)} MB`);
+        onLog(`Downloaded: ${(received / 1024 / 1024).toFixed(2)} MB`);
       }
     }
   });
 
   await pipeline(readable, fs.createWriteStream(targetPath));
-  onLog("下载完成。");
+  onLog("Download complete.");
 
   return { path: targetPath };
 }

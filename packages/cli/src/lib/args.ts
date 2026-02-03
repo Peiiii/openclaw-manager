@@ -15,11 +15,9 @@ const longKeyMap: Record<string, keyof CliFlags> = {
   "error-log-path": "errorLogPath",
   "non-interactive": "nonInteractive",
   "dry-run": "dryRun",
-  "keep-clawdbot": "keepClawdbot",
   "no-stop": "noStop",
   force: "force",
-  "install-dir": "installDir",
-  "clawdbot-dir": "clawdbotDir"
+  "install-dir": "installDir"
 };
 
 const shortKeyMap: Record<string, keyof CliFlags> = {
@@ -49,7 +47,6 @@ export function parseArgs(argv: string[]): ParsedArgs {
         key === "version" ||
         key === "nonInteractive" ||
         key === "dryRun" ||
-        key === "keepClawdbot" ||
         key === "noStop" ||
         key === "force"
       ) {

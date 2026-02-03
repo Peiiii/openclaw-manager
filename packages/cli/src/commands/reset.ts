@@ -7,13 +7,11 @@ export function resetManager(flags: CliFlags): { ok: boolean; messages: string[]
   return resetEnvironmentShared({
     flags: {
       dryRun: flags.dryRun,
-      keepClawdbot: flags.keepClawdbot,
       noStop: flags.noStop,
       force: flags.force,
       configDir: flags.configDir,
       configPath: flags.configPath,
-      installDir: flags.installDir,
-      clawdbotDir: flags.clawdbotDir
+      installDir: flags.installDir
     },
     stopAll: () => stopAll(flags),
     sandboxDirs: listSandboxDirs()

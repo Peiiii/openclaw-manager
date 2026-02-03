@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/openclaw-manager.svg)](https://www.npmjs.com/package/openclaw-manager)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> OpenClaw（原 Clawdbot）安装与配置工具，本地一站式完成安装、配置与配对。
+> OpenClaw 安装与配置工具，本地一站式完成安装、配置与配对。
 
 ![OpenClaw Manager 截图](images/screenshots/openclaw-manager.png)
 
@@ -65,7 +65,7 @@ curl -fsSL https://openclaw-manager.com/docker.sh | bash
 1. 运行安装命令 → Manager 服务自动启动
 2. 浏览器访问 `http://localhost:17321`
 3. 使用安装时设置的用户名和密码登录管理面板
-4. 按引导安装 OpenClaw CLI（npm 包名 `clawdbot`）
+4. 按引导安装 OpenClaw CLI（npm 包名 `openclaw`）
 5. 配置 Discord Bot Token
 6. 配置 AI 模型（API Key）
 7. 与 Bot 配对

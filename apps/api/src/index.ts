@@ -10,7 +10,8 @@ import { parseOrigins, parsePort } from "./lib/utils.js";
 import type { ApiDeps } from "./deps.js";
 
 const repoRoot = resolveRepoRoot();
-const webDist = resolveWebDist(repoRoot);
+const webUrl = process.env.MANAGER_WEB_URL ?? process.env.ONBOARDING_WEB_URL ?? null;
+const webDist = webUrl ? null : resolveWebDist(repoRoot);
 const commandRegistry = buildCommandRegistry(repoRoot);
 const processManager = createProcessManager(commandRegistry);
 const runCommand = createCommandRunner(repoRoot);
@@ -36,7 +37,8 @@ const port =
 
 const app = createApp(deps, {
   corsOrigins: parseOrigins(process.env.MANAGER_CORS_ORIGIN),
-  webDist
+  webDist,
+  webUrl
 });
 
 serve({

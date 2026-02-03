@@ -1,7 +1,8 @@
 import { DEFAULT_GATEWAY_HOST, DEFAULT_GATEWAY_PORT } from "../lib/constants.js";
 import { checkGateway } from "../lib/gateway.js";
 import { getOnboardingStatus } from "../lib/onboarding.js";
-import { getCliStatus, getSystemStatus } from "../lib/system.js";
+import { getCliStatus } from "../lib/openclaw-cli.js";
+import { getSystemStatus } from "../lib/system.js";
 import { parsePort } from "../lib/utils.js";
 import type { ApiDeps } from "../deps.js";
 

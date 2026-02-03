@@ -19,7 +19,7 @@ export function findListeningPids(port: number): number[] {
 
 export function listGatewayProcesses(): number[] {
   if (process.platform === "win32" || !commandExists("pgrep")) return [];
-  const result = spawnSync("pgrep", ["-fl", "clawdbot-gateway"], { encoding: "utf-8" });
+  const result = spawnSync("pgrep", ["-fl", "openclaw-gateway"], { encoding: "utf-8" });
   if (result.error || result.status !== 0) return [];
   return String(result.stdout)
     .split(/\n/)

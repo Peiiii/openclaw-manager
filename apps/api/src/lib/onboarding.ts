@@ -1,6 +1,7 @@
 import { ONBOARDING_CACHE_MS } from "./constants.js";
 import { parseJsonFromCliOutput } from "./cli-output.js";
 import { readConfigSnapshot } from "./openclaw-config.js";
+import { resolveCli } from "./openclaw-cli.js";
 import { parsePositiveInt } from "./utils.js";
 import type { CommandRunner } from "./runner.js";
 
@@ -55,10 +56,11 @@ export async function getOnboardingStatus(
     return data;
   }
 
+  const cli = resolveCli();
   const [discordStatus, pendingPairings, aiStatus] = await Promise.all([
     readDiscordStatus(),
-    readPendingDiscordPairings(runCommand),
-    readAiAuthStatus(runCommand)
+    readPendingDiscordPairings(runCommand, cli.command),
+    readAiAuthStatus(runCommand, cli.command)
   ]);
   const [tokenConfigured, allowFromConfigured] = discordStatus;
 
@@ -175,10 +177,13 @@ function resolveEnvRef(raw: string): string {
   return process.env[envKey]?.trim() ?? "";
 }
 
-async function readPendingDiscordPairings(runCommand: CommandRunner): Promise<number> {
+async function readPendingDiscordPairings(
+  runCommand: CommandRunner,
+  command: string
+): Promise<number> {
   try {
     const output = await runCommand(
-      "clawdbot",
+      command,
       ["pairing", "list", "--channel", "discord", "--json"],
       4000
     );
@@ -189,9 +194,9 @@ async function readPendingDiscordPairings(runCommand: CommandRunner): Promise<nu
   }
 }
 
-async function readAiAuthStatus(runCommand: CommandRunner) {
+async function readAiAuthStatus(runCommand: CommandRunner, command: string) {
   try {
-    const output = await runCommand("clawdbot", ["models", "status", "--json"], 8000);
+    const output = await runCommand(command, ["models", "status", "--json"], 8000);
     const parsed = parseJsonFromCliOutput(output) as {
       auth?: { missingProvidersInUse?: unknown };
     } | null;

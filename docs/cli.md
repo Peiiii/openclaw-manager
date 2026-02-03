@@ -68,7 +68,7 @@ pnpm manager:pairing-approve -- --code "ABCDE123" --continue
 pnpm manager:sandbox -- --print-env
 # 可选：--user/--pass 自定义沙盒管理员账号
 # 按输出的 export 执行 apply
-pnpm manager:sandbox-stop -- --dir "/tmp/clawdbot-manager-sandbox-<timestamp>"
+pnpm manager:sandbox-stop -- --dir "/tmp/openclaw-manager-sandbox-<timestamp>"
 ```
 
 ### 方案 D：一键隔离验证
@@ -171,7 +171,7 @@ pnpm manager:sandbox -- --print-env
 
 停止隔离沙盒：
 ```bash
-pnpm manager:sandbox-stop -- --dir "/tmp/clawdbot-manager-sandbox-<timestamp>"
+pnpm manager:sandbox-stop -- --dir "/tmp/openclaw-manager-sandbox-<timestamp>"
 ```
 
 停止所有实例（manager + sandboxes + gateway）：
@@ -187,11 +187,6 @@ pnpm manager:stop-all -- --dry-run
 ```bash
 pnpm manager:reset
 ```
-保留 OpenClaw 数据（仅清理 manager 相关）：
-```bash
-pnpm manager:reset -- --keep-clawdbot
-```
-
 快速启动网关：
 ```bash
 pnpm manager:quickstart

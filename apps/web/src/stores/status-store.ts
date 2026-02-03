@@ -37,6 +37,9 @@ export type StatusResponse = {
     installed: boolean;
     path: string | null;
     version: string | null;
+    command: string;
+    packageName: string;
+    displayName: string;
   };
   gateway: {
     ok: boolean;

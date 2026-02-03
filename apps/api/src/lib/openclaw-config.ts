@@ -4,8 +4,7 @@ import path from "node:path";
 import JSON5 from "json5";
 
 const CONFIG_FILENAME = "openclaw.json";
-const LEGACY_CONFIG_FILENAMES = ["clawdbot.json", "moltbot.json", "moldbot.json"] as const;
-const STATE_DIRS = [".openclaw", ".clawdbot", ".moltbot", ".moldbot"] as const;
+const STATE_DIRS = [".openclaw"] as const;
 
 export type ConfigSnapshot =
   | { ok: true; path: string; raw: string; config: unknown }
@@ -22,7 +21,7 @@ function resolveUserPath(input: string): string {
 }
 
 function resolveStateDirCandidates(env: NodeJS.ProcessEnv): string[] {
-  const override = env.OPENCLAW_STATE_DIR?.trim() || env.CLAWDBOT_STATE_DIR?.trim();
+  const override = env.OPENCLAW_STATE_DIR?.trim();
   if (override) {
     return [resolveUserPath(override)];
   }
@@ -30,7 +29,7 @@ function resolveStateDirCandidates(env: NodeJS.ProcessEnv): string[] {
 }
 
 export function resolveConfigCandidates(env: NodeJS.ProcessEnv = process.env): string[] {
-  const explicit = env.OPENCLAW_CONFIG_PATH?.trim() || env.CLAWDBOT_CONFIG_PATH?.trim();
+  const explicit = env.OPENCLAW_CONFIG_PATH?.trim();
   if (explicit) {
     return [resolveUserPath(explicit)];
   }
@@ -39,7 +38,6 @@ export function resolveConfigCandidates(env: NodeJS.ProcessEnv = process.env): s
   const stateDirs = resolveStateDirCandidates(env);
   for (const stateDir of stateDirs) {
     candidates.push(path.join(stateDir, CONFIG_FILENAME));
-    candidates.push(...LEGACY_CONFIG_FILENAMES.map((name) => path.join(stateDir, name)));
   }
   return candidates;
 }

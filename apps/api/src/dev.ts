@@ -22,7 +22,9 @@ const viteCacheDir =
 const apiEnv: NodeJS.ProcessEnv = {
   ...process.env,
   MANAGER_API_PORT: String(apiPort),
-  ONBOARDING_API_PORT: String(apiPort)
+  ONBOARDING_API_PORT: String(apiPort),
+  MANAGER_WEB_URL: webUrl,
+  ONBOARDING_WEB_URL: webUrl
 };
 
 if (typeof process.env.MANAGER_AUTH_DISABLED === "string") {

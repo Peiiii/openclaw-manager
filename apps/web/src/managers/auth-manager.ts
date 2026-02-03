@@ -24,6 +24,10 @@ export class AuthManager {
       if (!result.authenticated) {
         useAuthStore.getState().setAuthHeader(null);
       }
+    } else {
+      useAuthStore.getState().setAuthenticated(false);
+      useAuthStore.getState().setAuthHeader(null);
+      useAuthStore.getState().setSessionChecked(true);
     }
     return result;
   };

@@ -46,11 +46,12 @@ function syncEventsFromContext(
   if (context.tokenConfigured !== current.tokenConfirmed) {
     next.tokenConfirmed = context.tokenConfigured;
   }
-  if (context.gatewayOk && !current.gatewayVerified) {
+  if (!context.cliInstalled) {
+    if (current.gatewayVerified) {
+      next.gatewayVerified = false;
+    }
+  } else if (context.gatewayOk && !current.gatewayVerified) {
     next.gatewayVerified = true;
-  }
-  if (!context.cliInstalled && current.gatewayVerified) {
-    next.gatewayVerified = false;
   }
   if (context.aiConfigured !== current.aiConfirmed) {
     next.aiConfirmed = context.aiConfigured;

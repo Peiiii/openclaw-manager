@@ -96,8 +96,5 @@ export function writeAdminConfig(configPath: string, username: string, password:
 export function resolveConfigDirCandidates(flags: CliFlags): string[] {
   const explicit = flags.configDir ?? process.env.MANAGER_CONFIG_DIR;
   if (explicit) return [explicit];
-  return [
-    path.join(os.homedir(), ".openclaw-manager"),
-    path.join(os.homedir(), ".clawdbot-manager")
-  ];
+  return [path.join(os.homedir(), ".openclaw-manager")];
 }

@@ -4,13 +4,11 @@ import path from "node:path";
 
 export type ResetSharedFlags = {
   dryRun?: boolean;
-  keepClawdbot?: boolean;
   noStop?: boolean;
   force?: boolean;
   configDir?: string;
   configPath?: string;
   installDir?: string;
-  clawdbotDir?: string;
 };
 
 export type StopAllResult = { ok: boolean; messages: string[]; error?: string };
@@ -83,7 +81,6 @@ export function resetEnvironmentShared(params: ResetSharedParams): {
 function buildResetTargets(flags: ResetSharedFlags, sandboxDirs?: string[]): ResetTarget[] {
   const configDirs = resolveConfigDirs(flags);
   const installDirs = resolveInstallDirs(flags);
-  const clawdbotDir = flags.keepClawdbot ? "" : resolveClawdbotDir(flags);
   const openclawDir = resolveOpenclawDir();
   const sandboxes = sandboxDirs && sandboxDirs.length ? sandboxDirs : listSandboxDirs();
 
@@ -93,9 +90,6 @@ function buildResetTargets(flags: ResetSharedFlags, sandboxDirs?: string[]): Res
     ...sandboxes.map((dir) => ({ label: "sandbox", path: dir }))
   ];
 
-  if (clawdbotDir) {
-    targets.push({ label: "clawdbot", path: clawdbotDir });
-  }
   if (openclawDir) {
     targets.push({ label: "openclaw", path: openclawDir });
   }
@@ -112,9 +106,9 @@ function resolveConfigDirs(flags: ResetSharedFlags): string[] {
 
   const home = os.homedir();
   if (isRootUser()) {
-    return ["/etc/openclaw-manager", "/etc/clawdbot-manager"];
+    return ["/etc/openclaw-manager"];
   }
-  return [path.join(home, ".openclaw-manager"), path.join(home, ".clawdbot-manager")];
+  return [path.join(home, ".openclaw-manager")];
 }
 
 function resolveInstallDirs(flags: ResetSharedFlags): string[] {
@@ -122,20 +116,13 @@ function resolveInstallDirs(flags: ResetSharedFlags): string[] {
   if (explicit) return [explicit];
   const home = os.homedir();
   if (isRootUser()) {
-    return ["/opt/openclaw-manager", "/opt/clawdbot-manager"];
+    return ["/opt/openclaw-manager"];
   }
-  return [path.join(home, "openclaw-manager"), path.join(home, "clawdbot-manager")];
-}
-
-function resolveClawdbotDir(flags: ResetSharedFlags): string {
-  const explicit = normalizePath(flags.clawdbotDir) ?? normalizePath(process.env.CLAWDBOT_DIR);
-  if (explicit) return explicit;
-  return path.join(os.homedir(), ".clawdbot");
+  return [path.join(home, "openclaw-manager")];
 }
 
 function resolveOpenclawDir(): string {
-  const explicit =
-    normalizePath(process.env.OPENCLAW_STATE_DIR) ?? normalizePath(process.env.CLAWDBOT_STATE_DIR);
+  const explicit = normalizePath(process.env.OPENCLAW_STATE_DIR);
   if (explicit) return explicit;
   return path.join(os.homedir(), ".openclaw");
 }
@@ -152,8 +139,7 @@ function listSandboxDirs(): string[] {
     .filter((entry) => {
       return (
         entry.isDirectory() &&
-        (entry.name.startsWith("openclaw-manager-sandbox-") ||
-          entry.name.startsWith("clawdbot-manager-sandbox-"))
+        entry.name.startsWith("openclaw-manager-sandbox-")
       );
     })
     .map((entry) => path.join(dir, entry.name));
@@ -170,9 +156,6 @@ function isExpectedResetPath(resolved: string): boolean {
   return (
     normalized.includes("/openclaw-manager") ||
     normalized.includes("/.openclaw-manager") ||
-    normalized.includes("/clawdbot-manager") ||
-    normalized.includes("/.clawdbot-manager") ||
-    normalized.includes("/.clawdbot") ||
     normalized.includes("/.openclaw")
   );
 }

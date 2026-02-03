@@ -1,5 +1,5 @@
 import type { ApiDeps } from "../deps.js";
-import { getCliStatus } from "../lib/system.js";
+import { getCliStatus, OPENCLAW_CLI, resolveCli, runCliInstall } from "../lib/openclaw-cli.js";
 import { runCommandWithLogs } from "../lib/runner.js";
 import { parsePositiveInt, sleep } from "../lib/utils.js";
 import { runQuickstart, type QuickstartRequest } from "./quickstart.service.js";
@@ -13,37 +13,47 @@ const DEFAULT_PAIRING_APPROVE_TIMEOUT_MS = 8000;
 export function createCliInstallJob(deps: ApiDeps) {
   const job = deps.jobStore.createJob("Install OpenClaw CLI");
   deps.jobStore.startJob(job.id);
-  deps.jobStore.appendLog(job.id, "开始安装 OpenClaw CLI...");
+  deps.jobStore.appendLog(job.id, "Starting OpenClaw CLI installation...");
 
   const timeoutMs = parsePositiveInt(process.env.MANAGER_CLI_INSTALL_TIMEOUT_MS) ?? 600_000;
 
   void (async () => {
     const current = await getCliStatus(deps.runCommand);
     if (current.installed) {
-      deps.jobStore.appendLog(job.id, `CLI 已安装${current.version ? `（${current.version}）` : ""}。`);
+      deps.jobStore.appendLog(
+        job.id,
+        `CLI already installed${current.version ? ` (${current.version})` : ""}.`
+      );
       deps.jobStore.completeJob(job.id, { version: current.version ?? null });
       return;
     }
 
-    await runCommandWithLogs("npm", ["i", "-g", "clawdbot@latest"], {
-      cwd: deps.repoRoot,
-      env: {
-        ...process.env,
-        NPM_CONFIG_AUDIT: "false",
-        NPM_CONFIG_FUND: "false"
-      },
-      timeoutMs,
-      onLog: (line) => deps.jobStore.appendLog(job.id, line)
+    const installResult = await runCliInstall(async (candidate) => {
+      deps.jobStore.appendLog(job.id, `Installing ${candidate.packageName}@latest...`);
+      await runCommandWithLogs("npm", ["i", "-g", `${candidate.packageName}@latest`], {
+        cwd: deps.repoRoot,
+        env: {
+          ...process.env,
+          NPM_CONFIG_AUDIT: "false",
+          NPM_CONFIG_FUND: "false"
+        },
+        timeoutMs,
+        onLog: (line) => deps.jobStore.appendLog(job.id, line)
+      });
     });
+    if (!installResult.ok) {
+      throw new Error(installResult.error);
+    }
+    deps.jobStore.appendLog(job.id, `Installed ${OPENCLAW_CLI.packageName}@latest.`);
 
     const cli = await getCliStatus(deps.runCommand);
     if (cli.version) {
-      deps.jobStore.appendLog(job.id, `CLI 版本: ${cli.version}`);
+      deps.jobStore.appendLog(job.id, `CLI version: ${cli.version}`);
     }
     deps.jobStore.completeJob(job.id, { version: cli.version ?? null });
   })().catch((err: unknown) => {
     const message = err instanceof Error ? err.message : String(err);
-    deps.jobStore.appendLog(job.id, `安装失败: ${message}`);
+    deps.jobStore.appendLog(job.id, `Install failed: ${message}`);
     deps.jobStore.failJob(job.id, message);
   });
 
@@ -53,16 +63,16 @@ export function createCliInstallJob(deps: ApiDeps) {
 export function createQuickstartJob(deps: ApiDeps, body: QuickstartRequest) {
   const job = deps.jobStore.createJob("Quickstart");
   deps.jobStore.startJob(job.id);
-  deps.jobStore.appendLog(job.id, "开始执行快速启动...");
+  deps.jobStore.appendLog(job.id, "Starting quickstart...");
 
   void runQuickstart(deps, body, (line) => deps.jobStore.appendLog(job.id, line))
     .then((result) => {
       if (!result.ok) {
-        deps.jobStore.appendLog(job.id, `快速启动失败: ${result.error}`);
+        deps.jobStore.appendLog(job.id, `Quickstart failed: ${result.error}`);
         deps.jobStore.failJob(job.id, result.error);
         return;
       }
-      deps.jobStore.appendLog(job.id, "快速启动完成。");
+      deps.jobStore.appendLog(job.id, "Quickstart completed.");
       deps.jobStore.completeJob(job.id, {
         gatewayReady: result.gatewayReady,
         probeOk: result.probeOk ?? null
@@ -70,7 +80,7 @@ export function createQuickstartJob(deps: ApiDeps, body: QuickstartRequest) {
     })
     .catch((err: unknown) => {
       const message = err instanceof Error ? err.message : String(err);
-      deps.jobStore.appendLog(job.id, `快速启动失败: ${message}`);
+      deps.jobStore.appendLog(job.id, `Quickstart failed: ${message}`);
       deps.jobStore.failJob(job.id, message);
     });
 
@@ -80,21 +90,22 @@ export function createQuickstartJob(deps: ApiDeps, body: QuickstartRequest) {
 export function createDiscordPairingJob(deps: ApiDeps, code: string) {
   const job = deps.jobStore.createJob("Discord Pairing");
   deps.jobStore.startJob(job.id);
-  deps.jobStore.appendLog(job.id, "开始处理配对请求...");
+  deps.jobStore.appendLog(job.id, "Starting pairing approval...");
 
-  void runCommandWithLogs("clawdbot", ["pairing", "approve", "discord", code], {
+  const cli = resolveCli();
+  void runCommandWithLogs(cli.command, ["pairing", "approve", "discord", code], {
     cwd: deps.repoRoot,
     env: process.env,
     timeoutMs: 8000,
     onLog: (line) => deps.jobStore.appendLog(job.id, line)
   })
     .then(() => {
-      deps.jobStore.appendLog(job.id, "配对已提交。");
+      deps.jobStore.appendLog(job.id, "Pairing submitted.");
       deps.jobStore.completeJob(job.id, { code });
     })
     .catch((err: unknown) => {
       const message = err instanceof Error ? err.message : String(err);
-      deps.jobStore.appendLog(job.id, `配对失败: ${message}`);
+      deps.jobStore.appendLog(job.id, `Pairing failed: ${message}`);
       deps.jobStore.failJob(job.id, message);
     });
 
@@ -107,7 +118,7 @@ export function createDiscordPairingWaitJob(
 ) {
   const job = deps.jobStore.createJob("Discord Pairing Wait");
   deps.jobStore.startJob(job.id);
-  deps.jobStore.appendLog(job.id, "等待配对请求...");
+  deps.jobStore.appendLog(job.id, "Waiting for pairing requests...");
 
   const timeoutMs =
     parsePositiveInt(toOptionalString(options.timeoutMs)) ??
@@ -119,40 +130,44 @@ export function createDiscordPairingWaitJob(
     DEFAULT_PAIRING_POLL_MS;
   const notify = Boolean(options.notify);
 
+  const cli = resolveCli();
   void (async () => {
     const startedAt = Date.now();
     let lastCount = -1;
     while (Date.now() - startedAt < timeoutMs) {
-      const snapshot = await fetchDiscordPairings(deps);
+      const snapshot = await fetchDiscordPairings(deps, cli.command);
       if (snapshot.error) {
-        deps.jobStore.appendLog(job.id, `读取配对请求失败: ${snapshot.error}`);
+        deps.jobStore.appendLog(
+          job.id,
+          `Failed to read pairing requests: ${snapshot.error}`
+        );
       }
       if (snapshot.count !== lastCount) {
-        deps.jobStore.appendLog(job.id, `待处理配对请求: ${snapshot.count}`);
+        deps.jobStore.appendLog(job.id, `Pending pairing requests: ${snapshot.count}`);
         lastCount = snapshot.count;
       }
       if (snapshot.code) {
-        deps.jobStore.appendLog(job.id, "发现配对请求，开始批准...");
+        deps.jobStore.appendLog(job.id, "Pairing request found, approving...");
         const args = notify
           ? ["pairing", "approve", "--notify", "discord", snapshot.code]
           : ["pairing", "approve", "discord", snapshot.code];
-        await runCommandWithLogs("clawdbot", args, {
+        await runCommandWithLogs(cli.command, args, {
           cwd: deps.repoRoot,
           env: process.env,
           timeoutMs: DEFAULT_PAIRING_APPROVE_TIMEOUT_MS,
           onLog: (line) => deps.jobStore.appendLog(job.id, line)
         });
-        deps.jobStore.appendLog(job.id, "配对已提交。");
+        deps.jobStore.appendLog(job.id, "Pairing submitted.");
         deps.jobStore.completeJob(job.id, { approved: true, notified: notify });
         return;
       }
       await sleep(pollMs);
     }
-    deps.jobStore.appendLog(job.id, "等待配对超时。");
+    deps.jobStore.appendLog(job.id, "Pairing wait timed out.");
     deps.jobStore.failJob(job.id, "pairing timeout");
   })().catch((err: unknown) => {
     const message = err instanceof Error ? err.message : String(err);
-    deps.jobStore.appendLog(job.id, `配对失败: ${message}`);
+    deps.jobStore.appendLog(job.id, `Pairing failed: ${message}`);
     deps.jobStore.failJob(job.id, message);
   });
 
@@ -176,7 +191,7 @@ export function createResourceDownloadJob(
   };
 
   if (!payload.url) {
-    deps.jobStore.appendLog(job.id, "未配置资源地址。");
+    deps.jobStore.appendLog(job.id, "Resource URL not configured.");
     deps.jobStore.failJob(job.id, "resource url missing");
     return job.id;
   }
@@ -187,7 +202,7 @@ export function createResourceDownloadJob(
     })
     .catch((err: unknown) => {
       const message = err instanceof Error ? err.message : String(err);
-      deps.jobStore.appendLog(job.id, `下载失败: ${message}`);
+      deps.jobStore.appendLog(job.id, `Download failed: ${message}`);
       deps.jobStore.failJob(job.id, message);
     });
 
@@ -200,14 +215,17 @@ function toOptionalString(value: number | string | undefined) {
   return undefined;
 }
 
-async function fetchDiscordPairings(deps: ApiDeps): Promise<{
+async function fetchDiscordPairings(
+  deps: ApiDeps,
+  command: string
+): Promise<{
   code: string | null;
   count: number;
   error?: string;
 }> {
   try {
     const output = await deps.runCommand(
-      "clawdbot",
+      command,
       ["pairing", "list", "--channel", "discord", "--json"],
       8000
     );
@@ -234,19 +252,19 @@ export function createAiAuthJob(
 ) {
   const job = deps.jobStore.createJob("Configure AI Provider");
   deps.jobStore.startJob(job.id);
-  deps.jobStore.appendLog(job.id, "开始配置 AI 凭证...");
+  deps.jobStore.appendLog(job.id, "Starting AI credential setup...");
 
   const provider = options.provider.trim().toLowerCase();
   const config = resolveAiProviderConfig(provider);
   if (!config) {
-    deps.jobStore.appendLog(job.id, `不支持的 provider: ${provider}`);
+    deps.jobStore.appendLog(job.id, `Unsupported provider: ${provider}`);
     deps.jobStore.failJob(job.id, "unsupported provider");
     return job.id;
   }
 
   const apiKey = options.apiKey.trim();
   if (!apiKey) {
-    deps.jobStore.appendLog(job.id, "API Key 为空。");
+    deps.jobStore.appendLog(job.id, "API key is empty.");
     deps.jobStore.failJob(job.id, "missing api key");
     return job.id;
   }
@@ -269,8 +287,9 @@ export function createAiAuthJob(
     "--skip-daemon"
   ];
 
+  const cli = resolveCli();
   void (async () => {
-    await runCommandWithLogs("clawdbot", args, {
+    await runCommandWithLogs(cli.command, args, {
       cwd: deps.repoRoot,
       env: {
         ...process.env,
@@ -280,13 +299,13 @@ export function createAiAuthJob(
       onLog: (line) => deps.jobStore.appendLog(job.id, line)
     });
     if (provider === "minimax-cn") {
-      await applyMinimaxCnConfig(deps, job.id, timeoutMs);
+      await applyMinimaxCnConfig(deps, cli.command, job.id, timeoutMs);
     }
-    deps.jobStore.appendLog(job.id, "AI 凭证配置完成。");
+    deps.jobStore.appendLog(job.id, "AI credential setup complete.");
     deps.jobStore.completeJob(job.id, { provider });
   })().catch((err: unknown) => {
     const message = err instanceof Error ? err.message : String(err);
-    deps.jobStore.appendLog(job.id, `AI 配置失败: ${message}`);
+    deps.jobStore.appendLog(job.id, `AI configuration failed: ${message}`);
     deps.jobStore.failJob(job.id, message);
   });
 
@@ -341,10 +360,15 @@ function resolveAiProviderConfig(
   return null;
 }
 
-async function applyMinimaxCnConfig(deps: ApiDeps, jobId: string, timeoutMs: number) {
-  deps.jobStore.appendLog(jobId, "配置 MiniMax 国内 API 地址...");
+async function applyMinimaxCnConfig(
+  deps: ApiDeps,
+  command: string,
+  jobId: string,
+  timeoutMs: number
+) {
+  deps.jobStore.appendLog(jobId, "Configuring MiniMax China API base URL...");
   await runCommandWithLogs(
-    "clawdbot",
+    command,
     ["config", "set", "models.providers.minimax.baseUrl", MINIMAX_CN_BASE_URL],
     {
       cwd: deps.repoRoot,
@@ -353,9 +377,9 @@ async function applyMinimaxCnConfig(deps: ApiDeps, jobId: string, timeoutMs: num
       onLog: (line) => deps.jobStore.appendLog(jobId, line)
     }
   );
-  deps.jobStore.appendLog(jobId, "配置 MiniMax 国内鉴权头...");
+  deps.jobStore.appendLog(jobId, "Configuring MiniMax China auth header...");
   await runCommandWithLogs(
-    "clawdbot",
+    command,
     ["config", "set", "models.providers.minimax.authHeader", "true", "--json"],
     {
       cwd: deps.repoRoot,
@@ -364,5 +388,5 @@ async function applyMinimaxCnConfig(deps: ApiDeps, jobId: string, timeoutMs: num
       onLog: (line) => deps.jobStore.appendLog(jobId, line)
     }
   );
-  deps.jobStore.appendLog(jobId, "MiniMax 国内配置完成。");
+  deps.jobStore.appendLog(jobId, "MiniMax China configuration complete.");
 }

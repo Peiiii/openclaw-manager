@@ -12,9 +12,7 @@ export function listSandboxDirs() {
     }
     return entries
         .filter((entry) => {
-        return (entry.isDirectory() &&
-            (entry.name.startsWith("openclaw-manager-sandbox-") ||
-                entry.name.startsWith("clawdbot-manager-sandbox-")));
+        return entry.isDirectory() && entry.name.startsWith("openclaw-manager-sandbox-");
     })
         .map((entry) => path.join(dir, entry.name));
 }
