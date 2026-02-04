@@ -94,6 +94,7 @@
 - `docs/logs/v0.1.21-vps-cli-install-fallback/README.md`
 - `docs/logs/v0.1.22-cli-process-cleanup/README.md`
 - `docs/logs/v0.1.23-pairing-reset-required/README.md`
+- `docs/logs/v0.1.24-manager-status-auth-default/README.md`
 
 ## 写日志的标准
 

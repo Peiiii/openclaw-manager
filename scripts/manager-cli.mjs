@@ -329,16 +329,18 @@ function resolveAdminCredentials(params) {
   const user =
     params.flags.user ??
     params.flags.username ??
-    params.config?.admin?.user ??
+    process.env.MANAGER_AUTH_USERNAME ??
     process.env.MANAGER_AUTH_USER ??
     process.env.MANAGER_ADMIN_USER ??
+    params.config?.admin?.user ??
     "";
   const pass =
     params.flags.pass ??
     params.flags.password ??
-    params.config?.admin?.pass ??
+    process.env.MANAGER_AUTH_PASSWORD ??
     process.env.MANAGER_AUTH_PASS ??
     process.env.MANAGER_ADMIN_PASS ??
+    params.config?.admin?.pass ??
     "";
   return {
     user: typeof user === "string" ? user.trim() : "",
@@ -621,8 +623,8 @@ Commands:
 Flags:
   --api <base>            API base (default: http://127.0.0.1:17321)
   --config <path>         TOML config path (default: manager.toml)
-  --user <user>           Auth username (or MANAGER_AUTH_USER)
-  --pass <pass>           Auth password (or MANAGER_AUTH_PASS)
+  --user <user>           Auth username (or MANAGER_AUTH_USERNAME)
+  --pass <pass>           Auth password (or MANAGER_AUTH_PASSWORD)
   --non-interactive       Disable prompts (or MANAGER_NON_INTERACTIVE=1)
   --api-port <port>       API port override (sandbox/ps/server-stop)
   --dry-run               Print stop-all targets without stopping (stop-all only)
@@ -767,7 +769,7 @@ async function runSandboxVerify(params) {
     if (message.includes("pairing code")) {
       console.error(message);
       console.error(
-        `next: MANAGER_API_URL="${sandbox.apiBase}" MANAGER_AUTH_USER="${sandbox.admin.user}" MANAGER_AUTH_PASS="${sandbox.admin.pass}" pnpm manager:pairing-approve -- --code "<PAIRING_CODE>" --continue`
+        `next: MANAGER_API_URL="${sandbox.apiBase}" MANAGER_AUTH_USERNAME="${sandbox.admin.user}" MANAGER_AUTH_PASSWORD="${sandbox.admin.pass}" pnpm manager:pairing-approve -- --code "<PAIRING_CODE>" --continue`
       );
       return sandbox;
     }
@@ -1552,7 +1554,7 @@ function printSandboxSummary(result, options) {
     console.log(`[sandbox] api log: ${result.logFile}`);
   }
   console.log(
-    `[sandbox] next: MANAGER_CONFIG_PATH="${result.configPath}" MANAGER_API_URL="${result.apiBase}" MANAGER_AUTH_USER="${result.admin.user}" MANAGER_AUTH_PASS="${result.admin.pass}" pnpm manager:apply -- --non-interactive`
+    `[sandbox] next: MANAGER_CONFIG_PATH="${result.configPath}" MANAGER_API_URL="${result.apiBase}" MANAGER_AUTH_USERNAME="${result.admin.user}" MANAGER_AUTH_PASSWORD="${result.admin.pass}" pnpm manager:apply -- --non-interactive`
   );
   console.log(
     `[sandbox] stop: node scripts/manager-cli.mjs sandbox-stop --dir "${result.rootDir}"`
@@ -1560,8 +1562,8 @@ function printSandboxSummary(result, options) {
   if (options.printEnv) {
     console.log(`export MANAGER_CONFIG_PATH="${result.configPath}"`);
     console.log(`export MANAGER_API_URL="${result.apiBase}"`);
-    console.log(`export MANAGER_AUTH_USER="${result.admin.user}"`);
-    console.log(`export MANAGER_AUTH_PASS="${result.admin.pass}"`);
+    console.log(`export MANAGER_AUTH_USERNAME="${result.admin.user}"`);
+    console.log(`export MANAGER_AUTH_PASSWORD="${result.admin.pass}"`);
   }
 }
 

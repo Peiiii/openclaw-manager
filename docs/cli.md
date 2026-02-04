@@ -33,7 +33,7 @@ node scripts/manager-cli.mjs status
 
 常用环境变量：
 - `MANAGER_API_URL`：API 地址
-- `MANAGER_AUTH_USER` / `MANAGER_AUTH_PASS`：管理账号
+- `MANAGER_AUTH_USERNAME` / `MANAGER_AUTH_PASSWORD`：管理账号
 - `MANAGER_NON_INTERACTIVE=1`：禁用交互提示
 
 ## 推荐流程
@@ -88,8 +88,8 @@ pnpm manager:verify
 base = "http://127.0.0.1:17321"
 
 [admin]
-user = "admin"
-pass = "pass"
+user = "openclaw"
+pass = "openclaw"
 
 [discord]
 token = "YOUR_DISCORD_BOT_TOKEN"
@@ -110,7 +110,7 @@ port = 18789
 如果启用了鉴权，请确保 API 启动时使用与 `manager.toml` 一致的管理员账号：
 
 ```bash
-MANAGER_AUTH_USERNAME=admin MANAGER_AUTH_PASSWORD=pass pnpm dev:api
+MANAGER_AUTH_USERNAME=openclaw MANAGER_AUTH_PASSWORD=openclaw pnpm dev:api
 ```
 
 ### 3) 检查服务状态
@@ -234,7 +234,7 @@ pnpm manager:pairing-wait -- --timeout 180000 --poll 3000 --notify
 
 ## 常见问题
 
-- `unauthorized`：检查 `MANAGER_AUTH_USER/MANAGER_AUTH_PASS`
+- `unauthorized`：检查 `MANAGER_AUTH_USERNAME/MANAGER_AUTH_PASSWORD`
 - `request failed: 404/500`：确认 API 正在运行，且 `--api` 指向正确端口
 
 ## 配置样例（TOML）
@@ -244,8 +244,8 @@ pnpm manager:pairing-wait -- --timeout 180000 --poll 3000 --notify
 base = "http://127.0.0.1:17321"
 
 [admin]
-user = "admin"
-pass = "pass"
+user = "openclaw"
+pass = "openclaw"
 
 [install]
 cli = true
